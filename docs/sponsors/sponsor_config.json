@@ -1,0 +1,30 @@
+{
+  "sponsor_name": "World U",
+  "hackathon_track": "Best Proof of Human Application",
+  "project_concept": "An anti-screenshot renderer designed to prove human presence, bypassing AI's single-image capture limitations.",
+  "priority_integration": ["World ID API", "MiniKit", "World Chain"],
+  "tech_boundaries": {
+    "allowed_frontend_sdk": "@worldcoin/idkit",
+    "backend_verification_endpoint": "https://developer.worldcoin.org/api/v1/verify",
+    "required_payload_keys": [
+      "proof",
+      "merkle_root",
+      "nullifier_hash",
+      "action"
+    ]
+  },
+  "use_case_alignment": [
+    "Proof of personhood via dynamic visual rendering",
+    "Bot protection and scraper evasion",
+    "Sybil-resistant user verification"
+  ],
+  "forbidden_actions": [
+    "Storing biometric data",
+    "Bypassing backend verification",
+    "Requiring PII for base verification"
+  ],
+  "deliverables_required": [
+    "Working code repository",
+    "Maximum 5-minute video demonstration highlighting the World integration"
+  ]
+}

@@ -30,6 +30,8 @@ infra:
 built as a standalone website, with login through world IDs, w react (tbd)
 mongodb
 github pages for hosting (tbd)
+styling:
+off-white (tbd), minimalist, clean, sleek, modern
 
 ### Docs
 

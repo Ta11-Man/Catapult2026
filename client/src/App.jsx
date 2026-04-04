@@ -13,7 +13,15 @@ import { useSession } from './hooks/useSession';
 export default function App() {
   const gridRef = useRef(null);
   const { cells, gridSize, zoomLevel, beta, latestCreatedAt, addCell, zoomIn, zoomOut } = useGrid();
-  const { verifiedNullifier, hasSubmitted, setVerifiedNullifier, setHasSubmitted } = useSession();
+  const {
+    verifiedNullifier,
+    hasSubmitted,
+    loginWithWorldId,
+    createWithoutLogin,
+    worldIdResponse,
+    setVerifiedNullifier,
+    setHasSubmitted
+  } = useSession();
 
   const [activePopup, setActivePopup] = useState('idle');
   const [selectedGridIndex, setSelectedGridIndex] = useState(null);
@@ -42,6 +50,20 @@ export default function App() {
       return;
     }
     setActivePopup('draw');
+  };
+
+  const handleWorldIdLogin = () => {
+    loginWithWorldId();
+    if (worldIdResponse) {
+      handleVerify(worldIdResponse);
+    }
+  };
+
+  const handleCreateWithoutLogin = () => {
+    createWithoutLogin();
+    if (worldIdResponse) {
+      handleVerify(worldIdResponse);
+    }
   };
 
   const handleDrawSubmit = (imageData) => {
@@ -100,7 +122,13 @@ export default function App() {
 
       <DownloadButton gridRef={gridRef} />
 
-      {activePopup === 'login' && <LoginPopup onClose={closePopups} onVerify={handleVerify} />}
+      {activePopup === 'login' && (
+        <LoginPopup
+          onClose={closePopups}
+          onVerify={handleWorldIdLogin}
+          onCreateWithoutLogin={handleCreateWithoutLogin}
+        />
+      )}
       {activePopup === 'draw' && <DrawPopup onClose={closePopups} onSubmit={handleDrawSubmit} />}
       {activePopup === 'confirm' && (
         <ConfirmPopup
@@ -114,4 +142,3 @@ export default function App() {
     </div>
   );
 }
-

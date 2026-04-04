@@ -27,3 +27,8 @@
 > Browser extension that uses WorldID to mark verified human users in comments on websites like Youtube and Reddit.
 
 - Gabe
+
+> AI-Resistant Peer Review / Academic Integrity Layer
+> Students submit assignments or peer reviews, and World ID proves each submission came from a unique real human — no bots, no one person submitting 6 times with fake accounts. With AI-generated work flooding academia, this is viscerally relevant at Purdue right now. Could plug into any LMS. Strong startup angle too (dual-track potential).
+
+- Claude

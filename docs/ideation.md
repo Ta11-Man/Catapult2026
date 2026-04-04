@@ -1,5 +1,13 @@
 # Things we spit-balled
 
+Please add you ideas to this document and feel free to leave some form of comments.
+
+## <!--- HTML style comments, but maybe make them visible when the doc is rendered :) --->
+
+> Human verification on a job application website like Workday or Greenhouse.
+
+- Adi
+
 > Malware to remove AI everything from people. When you have slopped up to your breaking point and want to cleanse you life of these stains. OS level computer scanner that looks for AI flagged content and destroys it.
 
 - Shreya

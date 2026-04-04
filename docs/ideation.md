@@ -28,6 +28,10 @@
 
 - Gabe
 
+> LLM distillation tool aimed at basic users. Give it login info and it will work like Open Claw, cron job to prompt a model online and learn from the result. [Ex](https://github.com/arcee-ai/DistillKit) (not been done like that)
+
+- Gabe
+
 > AI-Resistant Peer Review / Academic Integrity Layer
 > Students submit assignments or peer reviews, and World ID proves each submission came from a unique real human — no bots, no one person submitting 6 times with fake accounts. With AI-generated work flooding academia, this is viscerally relevant at Purdue right now. Could plug into any LMS. Strong startup angle too (dual-track potential).
 

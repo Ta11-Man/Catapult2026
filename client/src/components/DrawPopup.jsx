@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
+import './DrawPopup.css';
 
 export default function DrawPopup({ onClose, onSubmit }) {
   const sketchRef = useRef(null);
   const [strokeColor, setStrokeColor] = useState('#000000');
+  const [bg, setBg] = useState('#ffffff');
   const [strokeWidth, setStrokeWidth] = useState(4);
 
   const handleSubmit = async () => {
@@ -23,6 +25,10 @@ export default function DrawPopup({ onClose, onSubmit }) {
             <input type="color" value={strokeColor} onChange={(e) => setStrokeColor(e.target.value)} />
           </label>
           <label>
+            Background
+            <input type="color" value={bg} onChange={(e) => setBg(e.target.value)} />
+          </label>
+          <label>
             Stroke
             <input
               type="range"
@@ -32,17 +38,38 @@ export default function DrawPopup({ onClose, onSubmit }) {
               onChange={(e) => setStrokeWidth(Number(e.target.value))}
             />
           </label>
+          <div className='preview-container'>
+            <div 
+              style={{ 
+                width: `${strokeWidth}px`, 
+                height: `${strokeWidth}px`, 
+                backgroundColor: strokeColor,
+                borderRadius: '50%' 
+              }} 
+            />
+          </div>
+        </div>
+        <div className='action-group'>
           <button type="button" onClick={() => sketchRef.current?.undo()}>Undo</button>
           <button type="button" onClick={() => sketchRef.current?.clearCanvas()}>Clear</button>
         </div>
-        <ReactSketchCanvas
-          ref={sketchRef}
-          width="512px"
-          height="512px"
-          strokeWidth={strokeWidth}
-          strokeColor={strokeColor}
-          canvasColor="transparent"
-        />
+        <div className='canvas'>
+          <div className='canvas-frame'>
+            <ReactSketchCanvas
+              ref={sketchRef}
+              width="100%"
+              height="100%"
+              strokeWidth={strokeWidth}
+              strokeColor={strokeColor}
+              canvasColor={bg}
+              allowOnlyPointerType="all"
+              style={{ border: 'none' }}
+              smoothScrolling={true}
+              exportWithSmoothing={true}
+            />
+          </div>
+        </div>
+        
         <button type="button" className="primary" onClick={handleSubmit}>Submit</button>
       </div>
     </div>

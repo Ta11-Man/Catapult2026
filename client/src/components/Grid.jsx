@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import Cell from './Cell';
 
-export default function Grid({ cells, gridSize, zoomLevel, onEmptyCellClick, gridRef, onZoomIn, onZoomOut }) {
+export default function Grid({ cells, gridCols, gridRows, zoomLevel, onEmptyCellClick, gridRef, onZoomIn, onZoomOut }) {
   const cellMap = useMemo(() => {
     const map = new Map();
     for (const cell of cells) {
@@ -10,7 +10,10 @@ export default function Grid({ cells, gridSize, zoomLevel, onEmptyCellClick, gri
     return map;
   }, [cells]);
 
-  const totalCells = gridSize * gridSize;
+  const totalCells = gridCols * gridRows;
+
+  const cellWidth = Math.floor((window.innerWidth - 32) / gridCols);
+  const cellHeight = Math.floor((window.innerHeight - 32) / gridRows);
 
   return (
     <div className="grid-shell">
@@ -24,8 +27,8 @@ export default function Grid({ cells, gridSize, zoomLevel, onEmptyCellClick, gri
           ref={gridRef}
           className="grid"
           style={{
-            gridTemplateColumns: `repeat(${gridSize}, 512px)`,
-            gridTemplateRows: `repeat(${gridSize}, 512px)`,
+            gridTemplateColumns: `repeat(${gridCols}, ${cellWidth}px)`,
+            gridTemplateRows: `repeat(${gridRows}, ${cellHeight}px)`,
             transform: `scale(${zoomLevel})`,
             transformOrigin: 'center center'
           }}
@@ -37,6 +40,8 @@ export default function Grid({ cells, gridSize, zoomLevel, onEmptyCellClick, gri
                 key={index}
                 imageData={cell?.imageData || null}
                 onClick={() => onEmptyCellClick(index)}
+                cellWidth={cellWidth}
+                cellHeight={cellHeight}
               />
             );
           })}

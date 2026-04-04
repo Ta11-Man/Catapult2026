@@ -12,7 +12,7 @@ import { useSession } from './hooks/useSession';
 
 export default function App() {
   const gridRef = useRef(null);
-  const { cells, gridSize, zoomLevel, beta, latestCreatedAt, addCell, zoomIn, zoomOut } = useGrid();
+  const { cells, gridCols, gridRows, zoomLevel, beta, latestCreatedAt, addCell, zoomIn, zoomOut } = useGrid();
   const {
     verifiedNullifier,
     hasSubmitted,
@@ -112,7 +112,8 @@ export default function App() {
 
       <Grid
         cells={cells}
-        gridSize={gridSize}
+        gridCols={gridCols}
+        gridRows={gridRows}
         zoomLevel={zoomLevel}
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}

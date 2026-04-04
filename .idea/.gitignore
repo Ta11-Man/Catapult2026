@@ -7,4 +7,6 @@
 /dataSources/
 /dataSources.local.xml
 *env*
-
+*/dist/*
+*/build/*
+*/node_modules/*

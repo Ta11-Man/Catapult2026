@@ -24,12 +24,15 @@ when we hit a threshold alpha, we double the amount of cells
 you can zoom in or out
 blank cells are transparent bg
 when you tap on an empty cell you get a create popup w/ login, then the create interface, then a submission popup, then it's permanent
+cells decay after beta days, where beta resets as well as scales with every new submission
 the create interface is 512x512
 we store images in a database
 infra:
 built as a standalone website, with login through world IDs, w react (tbd)
 mongodb
 github pages for hosting (tbd)
+styling:
+off-white (tbd), minimalist, clean, sleek, modern
 
 ### Docs
 

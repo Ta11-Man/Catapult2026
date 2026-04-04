@@ -44,3 +44,6 @@ Please add you ideas to this document and feel free to leave some form of commen
 > Students submit assignments or peer reviews, and World ID proves each submission came from a unique real human — no bots, no one person submitting 6 times with fake accounts. With AI-generated work flooding academia, this is viscerally relevant at Purdue right now. Could plug into any LMS. Strong startup angle too (dual-track potential).
 
 - Claude
+
+> a "digital monument" that survives as long as someone touches it (real human -> from world id) but only one person can ever touch it
+- gemini

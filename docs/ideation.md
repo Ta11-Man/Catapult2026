@@ -45,5 +45,5 @@ Please add you ideas to this document and feel free to leave some form of commen
 
 - Claude
 
-> a "digital monument" that survives as long as someone touches it (real human -> from world id) but only one person can ever touch it
-- gemini
+> a "digital monument" that survives as long as someone touches it (real human -> from world id) but only one person can ever touch it; implementing this similarly to r/place, if your one lifetime submission can be anything in a small 16x16 or whatever cell, that inspires more community too
+- gemini, adi

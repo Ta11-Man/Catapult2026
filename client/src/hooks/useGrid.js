@@ -4,12 +4,15 @@ import { fetchCells } from '../api/client';
 export const BASE_BETA = 3;
 export const SCALE_FACTOR = 0.5;
 
-function computeGridSize(cellCount) {
-  let n = 4;
-  while (cellCount >= n * n * 0.75) {
-    n += 2;
+const COLS_UNIT = 16;
+const ROWS_UNIT = 9;
+
+function computeGridDimensions(cellCount) {
+  let n = 1;
+  while (cellCount >= n * COLS_UNIT * n * ROWS_UNIT * 0.75) {
+    n *= 2;
   }
-  return n;
+  return { gridCols: n * COLS_UNIT, gridRows: n * ROWS_UNIT };
 }
 
 export function useGrid() {
@@ -36,7 +39,7 @@ export function useGrid() {
     };
   }, []);
 
-  const gridSize = useMemo(() => computeGridSize(cells.length), [cells.length]);
+  const { gridCols, gridRows } = useMemo(() => computeGridDimensions(cells.length), [cells.length]);
   const beta = useMemo(() => BASE_BETA + cells.length * SCALE_FACTOR, [cells.length]);
 
   const addCell = useCallback((cell) => {
@@ -55,7 +58,8 @@ export function useGrid() {
 
   return {
     cells,
-    gridSize,
+    gridCols,
+    gridRows,
     zoomLevel,
     beta,
     latestCreatedAt,

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import Cell from './Cell';
 
-export default function Grid({ cells, gridCols, gridRows, zoomLevel, onEmptyCellClick, gridRef, onZoomIn, onZoomOut }) {
+export default function Grid({ cells, gridCols, gridRows, zoomLevel, focusedCellIndex, onEmptyCellClick, onFilledCellClick, gridRef, onZoomIn, onZoomOut }) {
   const cellMap = useMemo(() => {
     const map = new Map();
     for (const cell of cells) {
@@ -15,6 +15,8 @@ export default function Grid({ cells, gridCols, gridRows, zoomLevel, onEmptyCell
   const cellWidth = Math.floor((window.innerWidth - 32) / gridCols);
   const cellHeight = Math.floor((window.innerHeight - 32) / gridRows);
 
+  const isFocusing = focusedCellIndex !== null && focusedCellIndex !== undefined;
+
   return (
     <div className="grid-shell">
       <div className="zoom-controls">
@@ -25,7 +27,7 @@ export default function Grid({ cells, gridCols, gridRows, zoomLevel, onEmptyCell
       <div className="grid-scroll">
         <div
           ref={gridRef}
-          className="grid"
+          className={`grid${isFocusing ? ' is-focusing' : ''}`}
           style={{
             gridTemplateColumns: `repeat(${gridCols}, ${cellWidth}px)`,
             gridTemplateRows: `repeat(${gridRows}, ${cellHeight}px)`,
@@ -40,8 +42,10 @@ export default function Grid({ cells, gridCols, gridRows, zoomLevel, onEmptyCell
                 key={index}
                 imageData={cell?.imageData || null}
                 onClick={() => onEmptyCellClick(index)}
+                onFilledCellClick={(imageData, rect) => onFilledCellClick(index, imageData, rect)}
                 cellWidth={cellWidth}
                 cellHeight={cellHeight}
+                isDefocused={isFocusing && index !== focusedCellIndex}
               />
             );
           })}
@@ -50,4 +54,3 @@ export default function Grid({ cells, gridCols, gridRows, zoomLevel, onEmptyCell
     </div>
   );
 }
-

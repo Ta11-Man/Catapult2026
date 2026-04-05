@@ -7,6 +7,7 @@ import DrawPopup from './components/DrawPopup';
 import ConfirmPopup from './components/ConfirmPopup';
 import AlreadySubmittedPopup from './components/AlreadySubmittedPopup';
 import BottomStatusBar from './components/BottomStatusBar';
+import CellFocusOverlay from './components/CellFocusOverlay';
 import { createCell } from './api/client';
 import { useGrid } from './hooks/useGrid';
 import { useSession } from './hooks/useSession';
@@ -28,6 +29,7 @@ export default function App() {
     setHasSubmitted
   } = useSession();
 
+  const [focusedCell, setFocusedCell] = useState(null);
   const [activePopup, setActivePopup] = useState('idle');
   const [selectedGridIndex, setSelectedGridIndex] = useState(null);
   const [pendingImageData, setPendingImageData] = useState(null);
@@ -101,6 +103,10 @@ export default function App() {
       window.clearTimeout(timeoutId);
     };
   }, [isWelcomeOverlayExiting, INTRO_EXIT_MS]);
+
+  const handleFilledCellClick = (index, imageData, rect) => {
+    setFocusedCell({ index, imageData, rect });
+  };
 
   const closePopups = () => {
     setActivePopup('idle');
@@ -357,10 +363,13 @@ export default function App() {
         zoomLevel={zoomLevel}
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
+        focusedCellIndex={focusedCell?.index ?? null}
         onEmptyCellClick={handleEmptyCellClick}
+        onFilledCellClick={handleFilledCellClick}
         gridRef={gridRef}
       />
 
+      <CellFocusOverlay focusedCell={focusedCell} onClose={() => setFocusedCell(null)} />
 
       {/* keep root-mounted widget */}
       <IDKitWidget

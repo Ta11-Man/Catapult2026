@@ -13,6 +13,7 @@ import { useSession } from './hooks/useSession';
 
 
 export default function App() {
+  const INTRO_EXIT_MS = 350;
   const gridRef = useRef(null);
   const audioRef = useRef(null);
   const { cells, gridCols, gridRows, zoomLevel, beta, latestCreatedAt, addCell, zoomIn, zoomOut } = useGrid();
@@ -29,6 +30,8 @@ export default function App() {
   const [pendingImageData, setPendingImageData] = useState(null);
   const [isLoginFlowActive, setIsLoginFlowActive] = useState(false);
   const [isWorldIdPending, setIsWorldIdPending] = useState(false);
+  const [isWelcomeOverlayVisible, setIsWelcomeOverlayVisible] = useState(true);
+  const [isWelcomeOverlayExiting, setIsWelcomeOverlayExiting] = useState(false);
   const worldIdResolvedRef = useRef(false);
   const worldIdWasOpenRef = useRef(false);
   const { open: isIdKitOpen, setOpen: setIdKitOpen } = useIDKit();
@@ -46,6 +49,36 @@ export default function App() {
 
     setActivePopup('login');
   };
+
+  const handleEnterExperience = () => {
+    if (isWelcomeOverlayExiting) {
+      return;
+    }
+
+    // Explicit user gesture improves autoplay reliability across browsers.
+    if (audioRef.current) {
+      audioRef.current.play().catch(() => {
+        // Ignore autoplay errors; existing fallback listeners still apply.
+      });
+    }
+
+    setIsWelcomeOverlayExiting(true);
+  };
+
+  useEffect(() => {
+    if (!isWelcomeOverlayExiting) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsWelcomeOverlayVisible(false);
+      setIsWelcomeOverlayExiting(false);
+    }, INTRO_EXIT_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isWelcomeOverlayExiting, INTRO_EXIT_MS]);
 
   const closePopups = () => {
     setActivePopup('idle');
@@ -217,6 +250,26 @@ export default function App() {
 
   return (
     <div className={styles.app}>
+      {isWelcomeOverlayVisible && (
+        <div
+          className={`${styles.welcomeOverlay} ${isWelcomeOverlayExiting ? styles.welcomeOverlayExit : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Welcome to the Reef Experience"
+        >
+          <div className={styles.welcomeContent}>
+            <h1 className={styles.welcomeTitle}>Welcome to the Reef Experience</h1>
+            <button
+              type="button"
+              className={styles.welcomeEnterButton}
+              onClick={handleEnterExperience}
+            >
+              Enter
+            </button>
+          </div>
+        </div>
+      )}
+
       <header className={styles.topBar}>
         <div className={styles.stats}>
           {/* <div>Cells: {cells.length}</div>

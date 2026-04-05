@@ -10,7 +10,7 @@ export default function Cell({ imageData, onClick, cellWidth, cellHeight }) {
       disabled={isFilled}
       aria-label={isFilled ? 'Filled cell' : 'Empty cell'}
     >
-      {isFilled ? <img src={imageData} width={cellWidth} height={cellHeight} alt="Submitted drawing" /> : <span>+</span>}
+      {isFilled ? <img src={imageData} width={cellWidth} height={cellHeight} alt="Submitted drawing" draggable={false} /> : <span>+</span>}
     </button>
   );
 }

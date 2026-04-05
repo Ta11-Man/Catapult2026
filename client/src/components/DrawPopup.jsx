@@ -2,9 +2,29 @@ import { useRef, useState } from 'react';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import './DrawPopup.css';
 
+const FALLBACK_CANVAS_SIZE = 512;
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('image_load_failed'));
+    img.src = src;
+  });
+}
+
+function drawCoverImage(ctx, img, targetWidth, targetHeight) {
+  const scale = Math.max(targetWidth / img.width, targetHeight / img.height);
+  const drawWidth = img.width * scale;
+  const drawHeight = img.height * scale;
+  const dx = (targetWidth - drawWidth) / 2;
+  const dy = (targetHeight - drawHeight) / 2;
+  ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+}
 
 export default function DrawPopup({ onClose, onSubmit }) {
   const sketchRef = useRef(null);
+  const canvasFrameRef = useRef(null);
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [bg, setBg] = useState('#ffffff');
   const [strokeWidth, setStrokeWidth] = useState(15);
@@ -12,8 +32,37 @@ export default function DrawPopup({ onClose, onSubmit }) {
 
   const handleSubmit = async () => {
     if (!sketchRef.current) return;
-    const imageData = await sketchRef.current.exportImage('png');
-    onSubmit(imageData);
+
+    const strokeImageData = await sketchRef.current.exportImage('png');
+
+    try {
+      const frameWidth = canvasFrameRef.current?.clientWidth || FALLBACK_CANVAS_SIZE;
+      const frameHeight = canvasFrameRef.current?.clientHeight || FALLBACK_CANVAS_SIZE;
+      const composite = document.createElement('canvas');
+      composite.width = frameWidth;
+      composite.height = frameHeight;
+
+      const ctx = composite.getContext('2d');
+      if (!ctx) {
+        onSubmit(strokeImageData);
+        return;
+      }
+
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, frameWidth, frameHeight);
+
+      if (backgroundImage) {
+        const uploadedImage = await loadImage(backgroundImage);
+        drawCoverImage(ctx, uploadedImage, frameWidth, frameHeight);
+      }
+
+      const strokeImage = await loadImage(strokeImageData);
+      ctx.drawImage(strokeImage, 0, 0, frameWidth, frameHeight);
+      onSubmit(composite.toDataURL('image/png'));
+    } catch (_error) {
+      // Keep submission functional even if one composition layer fails.
+      onSubmit(strokeImageData);
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -94,17 +143,26 @@ export default function DrawPopup({ onClose, onSubmit }) {
           </div>
         </div>
         <div className="canvas">
-          <div className="canvas-frame">
+          <div className="canvas-frame" ref={canvasFrameRef}>
+            <div className="canvas-base" style={{ backgroundColor: bg }} />
+            {backgroundImage && (
+              <img
+                className="canvas-upload-preview"
+                src={backgroundImage}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
+            )}
             <ReactSketchCanvas
               ref={sketchRef}
               width="100%"
               height="100%"
               strokeWidth={strokeWidth}
               strokeColor={strokeColor}
-              backgroundImage={backgroundImage}
-              canvasColor={bg}
+              canvasColor="transparent"
               allowOnlyPointerType="all"
-              style={{ border: 'none' }}
+              style={{ border: 'none', position: 'relative', zIndex: 2, background: 'transparent' }}
               smoothScrolling={true}
               exportWithSmoothing={true}
             />

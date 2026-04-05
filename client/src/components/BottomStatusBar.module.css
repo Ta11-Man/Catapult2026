@@ -71,6 +71,25 @@
   transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
 }
 
+.infoPopup p {
+  margin: 0;
+}
+
+.infoPopupActions {
+  margin-top: 10px;
+}
+
+.infoPopupDownloadButton {
+  width: 100%;
+  background: var(--px-darkest);
+  color: var(--px-bg);
+  border-color: var(--px-darkest);
+  font-family: var(--px-font-display);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .infoPopupOpen {
   opacity: 1;
   visibility: visible;

@@ -100,10 +100,26 @@ export default function BottomStatusBar({ submissionCount, lastSubmissionDate })
           className={`${styles.infoPopup} ${isInfoOpen ? styles.infoPopupOpen : ''}`}
           aria-hidden={!isInfoOpen}
         >
-          Placeholder text. More about decay and persistence will go here.
+          <p>
+            Welcome to Reef, a place of art for humanity. The timer on the left
+            represents the current "decay" status of the reef, which is
+            influenced by user submissions. Each submission contributes to the
+            reef's vitality, and the timer counts down until the next decay
+            event.
+            <br></br>
+            <br></br>
+            Much like a real Coral Reef, our community needs fresh life to
+            thrive, and bots do not bring life. Each submission is a
+            once-in-a-lifetime contribution, causing a generational legacy and
+            bringing us together in the shared human experience.
+            <br></br>
+            <br></br>
+            We encourage you to submit your unique creation and be a part of
+            this living artwork. Together, we can keep the reef vibrant and
+            flourishing for generations to come.
+          </p>
         </div>
       </div>
     </div>
   );
 }
-

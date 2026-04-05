@@ -19,7 +19,7 @@ export default function App() {
   const ENTER_BUTTON_DELAY_MS = 600;
   const gridRef = useRef(null);
   const audioRef = useRef(null);
-  const { cells, gridCols, gridRows, zoomLevel, addCell, zoomIn, zoomOut } = useGrid();
+  const { cells, gridCols, gridRows, zoomLevel, panOffset, addCell, setZoomLevel, setPanOffset } = useGrid();
   const {
     verifiedNullifier,
     hasSubmitted,
@@ -73,15 +73,12 @@ export default function App() {
   };
 
   const handleEnterExperience = () => {
-    if (isWelcomeOverlayExiting) {
-      return;
+    if (audioRef.current) {
+      audioRef.current.play().catch(() => {});
     }
 
-    // Explicit user gesture improves autoplay reliability across browsers.
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {
-        // Ignore autoplay errors; existing fallback listeners still apply.
-      });
+    if (isWelcomeOverlayExiting) {
+      return;
     }
 
     setIsWelcomeOverlayExiting(true);
@@ -230,32 +227,7 @@ export default function App() {
     audio.preload = 'auto';
     audioRef.current = audio;
 
-    const tryPlay = () => {
-      if (!audioRef.current) {
-        return;
-      }
-      audioRef.current.play().catch(() => {
-        // Browser may block autoplay until user interacts.
-      });
-    };
-
-    tryPlay();
-
-    const onFirstInteraction = () => {
-      tryPlay();
-      window.removeEventListener('click', onFirstInteraction);
-      window.removeEventListener('keydown', onFirstInteraction);
-      window.removeEventListener('touchstart', onFirstInteraction);
-    };
-
-    window.addEventListener('click', onFirstInteraction);
-    window.addEventListener('keydown', onFirstInteraction);
-    window.addEventListener('touchstart', onFirstInteraction);
-
     return () => {
-      window.removeEventListener('click', onFirstInteraction);
-      window.removeEventListener('keydown', onFirstInteraction);
-      window.removeEventListener('touchstart', onFirstInteraction);
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = '';
@@ -355,8 +327,9 @@ export default function App() {
         gridCols={gridCols}
         gridRows={gridRows}
         zoomLevel={zoomLevel}
-        onZoomIn={zoomIn}
-        onZoomOut={zoomOut}
+        panOffset={panOffset}
+        setZoomLevel={setZoomLevel}
+        setPanOffset={setPanOffset}
         onEmptyCellClick={handleEmptyCellClick}
         gridRef={gridRef}
       />

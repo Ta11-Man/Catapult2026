@@ -68,10 +68,12 @@
   height: 88px;
   border-radius: 0;
   border: 1px solid var(--px-bg);
-  background: var(--px-bg);
+  background: color-mix(in srgb, var(--px-amber) 75%, var(--px-bg));
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--px-darkest) 25%, transparent);
   color: var(--px-darkest);
   font-size: 1rem;
   font-weight: 600;
+  letter-spacing: 0.15em;
   cursor: pointer;
 }
 
@@ -87,7 +89,9 @@
 }
 
 .welcomeEnterButton:hover {
-  background: var(--px-bg);
+  background: color-mix(in srgb, var(--px-amber) 75%, var(--px-bg));
+  outline: 1px solid var(--px-amber-light);
+  outline-offset: 3px;
 }
 
 :global(.grid-shell) {
@@ -101,11 +105,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: grab;
+  user-select: none;
+}
+
+:global(.grid-scroll:active) {
+  cursor: grabbing;
 }
 
 :global(.grid) {
   display: grid;
   gap: 0;
+  isolation: isolate;
 }
 
 :global(.cell) {
@@ -115,12 +126,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  transform: translateZ(0);
+  transition: transform 110ms ease-out, outline-color 110ms ease-out;
+  will-change: transform;
+}
+
+:global(.cell.filled:hover),
+:global(.cell.filled:focus-visible) {
+  transform: scale(1.08);
+  z-index: 2;
+  border-color: var(--px-amber-light);
+  box-shadow: inset 0 0 0 3px var(--px-amber-light);
 }
 
 :global(.cell img) {
   display: block;
   width: 100%;
   height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 :global(.cell.empty span) {
@@ -133,17 +159,6 @@
   opacity: 0.5;
 }
 
-:global(.zoom-controls) {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-:global(.zoom-controls button),
 :global(.download-button),
 :global(.primary),
 :global(.destructive),

@@ -1,3 +1,5 @@
+    <button type="button" className="download-button" onClick={handleDownload}>
+      Download Canvas
 import html2canvas from 'html2canvas';
 
 export default function DownloadButton({ gridRef }) {
@@ -5,7 +7,7 @@ export default function DownloadButton({ gridRef }) {
     if (!gridRef.current) return;
 
     const previousTransform = gridRef.current.style.transform;
-    gridRef.current.style.transform = 'scale(1)';
+    gridRef.current.style.transform = 'translate(0px, 0px) scale(1)';
 
     try {
       const canvas = await html2canvas(gridRef.current, {

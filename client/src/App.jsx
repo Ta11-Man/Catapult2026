@@ -145,11 +145,19 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      <div className={styles.stats}>
-        <div>Cells: {cells.length}</div>
-        <div>beta = {beta} days</div>
-        <div>Next decay in: {nextDecayText}</div>
-      </div>
+      <header className={styles.topBar}>
+        <div className={styles.stats}>
+          {/* <div>Cells: {cells.length}</div>
+          <div>beta = {beta} days</div>
+          <div>Next decay in: {nextDecayText}</div> */}
+          <div>Welcome to reef... time to decay: {nextDecayText}</div>
+        </div>
+        <div className={styles.actions}>
+          <DownloadButton gridRef={gridRef} />
+        </div>
+
+      </header>
+      
 
       <Grid
         cells={cells}
@@ -162,7 +170,6 @@ export default function App() {
         gridRef={gridRef}
       />
 
-      <DownloadButton gridRef={gridRef} />
 
       {activePopup === 'login' && (
         <LoginPopup

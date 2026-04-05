@@ -22,22 +22,22 @@ Proof of Attrition is a full-stack monorepo:
 4. Verify health endpoint and open app.
 
 ```bash
-cd /Users/adityagandhi/Development/cat/client
+cd client
 npm install
 cp .env.example .env.local
 
-cd /Users/adityagandhi/Development/cat/server
+cd server
 npm install
 cp .env.example .env
 ```
 
 ```bash
-cd /Users/adityagandhi/Development/cat/server
+cd server
 npm run dev
 ```
 
 ```bash
-cd /Users/adityagandhi/Development/cat/client
+cd client
 npm run dev
 ```
 
@@ -48,7 +48,7 @@ curl http://localhost:4000/health
 Expected health response:
 
 ```json
-{"ok":true}
+{ "ok": true }
 ```
 
 Open the app at:
@@ -60,20 +60,19 @@ http://localhost:5173
 ## Troubleshooting
 
 - **Backend says `node server.js` but no localhost response**
-    - Confirm `server/.env` exists and has `MONGODB_URI` + `PORT`.
-    - Check Atlas Network Access allows your IP.
-    - Check Atlas user/password are valid.
-    - Run `curl http://localhost:4000/health`.
+  - Confirm `server/.env` exists and has `MONGODB_URI` + `PORT`.
+  - Check Atlas Network Access allows your IP.
+  - Check Atlas user/password are valid.
+  - Run `curl http://localhost:4000/health`.
 
 - **Frontend loads but cannot fetch cells**
-    - Confirm `client/.env.local` has `VITE_API_URL=http://localhost:4000`.
-    - Confirm backend is running and `/api/cells` returns JSON.
-    - Check CORS `ALLOWED_ORIGIN` for deployed frontend origin.
+  - Confirm `client/.env.local` has `VITE_API_URL=http://localhost:4000`.
+  - Confirm backend is running and `/api/cells` returns JSON.
+  - Check CORS `ALLOWED_ORIGIN` for deployed frontend origin.
 
 - **World ID button appears but verification fails**
-    - Confirm `VITE_WLD_APP_ID` and `VITE_WLD_ACTION` match registered app/action.
-    - Ensure app/action are configured in `developer.worldcoin.org`.
-
+  - Confirm `VITE_WLD_APP_ID` and `VITE_WLD_ACTION` match registered app/action.
+  - Ensure app/action are configured in `developer.worldcoin.org`.
 
 ## Repository Structure
 
@@ -166,7 +165,13 @@ npm start
 Returns an array of submitted cells:
 
 ```json
-[{ "gridIndex": 0, "imageData": "data:image/png;base64,...", "createdAt": "..." }]
+[
+  {
+    "gridIndex": 0,
+    "imageData": "data:image/png;base64,...",
+    "createdAt": "..."
+  }
+]
 ```
 
 `nullifierHash` is intentionally not returned.

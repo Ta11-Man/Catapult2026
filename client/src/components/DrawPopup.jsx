@@ -37,7 +37,7 @@ export default function DrawPopup({ onClose, onSubmit }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay draw-overlay" onClick={onClose}>
       <div className="modal draw-modal" onClick={(event) => event.stopPropagation()}>
         <button type="button" className="close" onClick={onClose}>x</button>
         <h2>Draw your mark</h2>
@@ -60,39 +60,41 @@ export default function DrawPopup({ onClose, onSubmit }) {
               onChange={(e) => setStrokeWidth(Number(e.target.value))}
             />
           </label>
-          <div className='preview-container'>
-            <div 
-              style={{ 
-                width: `${strokeWidth}px`, 
-                height: `${strokeWidth}px`, 
+          <div className="preview-container">
+            <div
+              style={{
+                width: `${strokeWidth}px`,
+                height: `${strokeWidth}px`,
                 backgroundColor: strokeColor,
-                borderRadius: '50%' 
-              }} 
+                borderRadius: '50%'
+              }}
             />
           </div>
         </div>
-        <div className="tool-group">
-          <label className="upload-button">
-            Upload Image
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleImageUpload} 
-              style={{ display: 'none' }} 
-            />
-          </label>
-          {backgroundImage && (
-            <button type="button" onClick={() => setBackgroundImage(null)} className="remove-bg">
-              Remove Image
-            </button>
-          )}
+        <div className="toolbar-row">
+          <div className="action-group">
+            <button type="button" onClick={() => sketchRef.current?.undo()}>Undo</button>
+            <button type="button" onClick={() => sketchRef.current?.clearCanvas()}>Clear</button>
+          </div>
+          <div className="tool-group">
+            <label className="upload-button">
+              Upload Image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+            </label>
+            {backgroundImage && (
+              <button type="button" onClick={() => setBackgroundImage(null)} className="remove-bg">
+                Remove Image
+              </button>
+            )}
+          </div>
         </div>
-        <div className='action-group'>
-          <button type="button" onClick={() => sketchRef.current?.undo()}>Undo</button>
-          <button type="button" onClick={() => sketchRef.current?.clearCanvas()}>Clear</button>
-        </div>
-        <div className='canvas'>
-          <div className='canvas-frame'>
+        <div className="canvas">
+          <div className="canvas-frame">
             <ReactSketchCanvas
               ref={sketchRef}
               width="100%"
@@ -108,10 +110,9 @@ export default function DrawPopup({ onClose, onSubmit }) {
             />
           </div>
         </div>
-        
+
         <button type="button" className="primary" onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
 }
-

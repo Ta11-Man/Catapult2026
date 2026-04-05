@@ -10,35 +10,14 @@
   font-family: var(--px-font-body);
 }
 
-.topBar {
-  height: 64px;
-  min-height: 64px; /* Ensure it doesn't shrink */
-  background: var(--px-bg);
-  border-bottom: 1px solid var(--px-divider);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  z-index: 100;
-}
-
-.stats {
-  /* Remove top: 16px, left: 16px, and position: fixed */
-  display: flex;
-  gap: 20px;
-  background: transparent; /* Remove the old white bubble look */
-  border: none;
-  padding: 0;
-  min-width: auto;
-  align-items: center;
-}
 
 .app {
+  --bottom-status-reserve: 72px;
   display: flex;
   flex-direction: column;
   height: 100vh;
   position: relative;
-  /* padding: 16px; */
+  padding-bottom: var(--bottom-status-reserve);
 }
 
 .welcomeOverlay {
@@ -97,7 +76,7 @@
 :global(.grid-scroll) {
   overflow: hidden;
   width: 100vw;
-  height: calc(100vh - 64px);
+  height: calc(100vh - var(--bottom-status-reserve));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -221,8 +200,3 @@
   font-size: 18px;
 }
 
-.stats div {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--px-text-muted);
-}

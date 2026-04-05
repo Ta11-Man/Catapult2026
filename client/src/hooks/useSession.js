@@ -1,6 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-
-const SESSION_STORAGE_KEY = 'catapult_session_v1';
+import { useMemo, useState } from 'react';
 
 function createPlaceholderProof() {
   return {
@@ -11,7 +9,7 @@ function createPlaceholderProof() {
   };
 }
 
-function buildMockSession(loginMethod) {
+function buildMockSession(loginMethod, includeIdentity = false) {
   const suffix = Math.random().toString(36).slice(2, 10);
   const nullifier = `${loginMethod}_nullifier_${suffix}`;
 
@@ -21,55 +19,31 @@ function buildMockSession(loginMethod) {
     verifiedNullifier: nullifier,
     hasSubmitted: false,
     createdAt: new Date().toISOString(),
-    identity: {
-      nullifier_hash: nullifier,
-      ...createPlaceholderProof()
-    }
+    identity: includeIdentity
+      ? {
+        nullifier_hash: nullifier,
+        ...createPlaceholderProof()
+      }
+      : null
+  };
+}
+
+function createEmptySession() {
+  return {
+    isLoggedIn: false,
+    loginMethod: null,
+    verifiedNullifier: null,
+    hasSubmitted: false,
+    createdAt: null,
+    identity: null
   };
 }
 
 export function useSession() {
-  const [session, setSession] = useState(() => {
-    const saved = localStorage.getItem(SESSION_STORAGE_KEY);
-    if (!saved) {
-      return {
-        isLoggedIn: false,
-        loginMethod: null,
-        verifiedNullifier: null,
-        hasSubmitted: false,
-        createdAt: null,
-        identity: null
-      };
-    }
-
-    try {
-      const parsed = JSON.parse(saved);
-      return {
-        isLoggedIn: Boolean(parsed.isLoggedIn),
-        loginMethod: parsed.loginMethod || null,
-        verifiedNullifier: parsed.verifiedNullifier || null,
-        hasSubmitted: Boolean(parsed.hasSubmitted),
-        createdAt: parsed.createdAt || null,
-        identity: parsed.identity || null
-      };
-    } catch {
-      return {
-        isLoggedIn: false,
-        loginMethod: null,
-        verifiedNullifier: null,
-        hasSubmitted: false,
-        createdAt: null,
-        identity: null
-      };
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-  }, [session]);
+  const [session, setSession] = useState(createEmptySession);
 
   const loginWithWorldId = () => {
-    setSession(buildMockSession('world_id'));
+    setSession(buildMockSession('world_id', true));
   };
 
   const createWithoutLogin = () => {
@@ -80,7 +54,8 @@ export function useSession() {
     setSession((prev) => ({
       ...prev,
       isLoggedIn: Boolean(verifiedNullifier),
-      verifiedNullifier
+      verifiedNullifier,
+      hasSubmitted: prev.verifiedNullifier === verifiedNullifier ? prev.hasSubmitted : false
     }));
   };
 

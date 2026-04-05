@@ -25,10 +25,10 @@ export function fetchCells() {
   return request('/api/cells');
 }
 
-export function createCell({ nullifierHash, imageData }) {
+export function createCell({ nullifierHash, imageData, gridIndex }) {
   return request('/api/cells', {
     method: 'POST',
-    body: JSON.stringify({ nullifierHash, imageData })
+    body: JSON.stringify({ nullifierHash, imageData, gridIndex })
   });
 }
 

@@ -12,7 +12,8 @@ const cellSchema = new mongoose.Schema({
   },
   gridIndex: {
     type: Number,
-    required: true
+    required: true,
+    unique: true
   },
   createdAt: {
     type: Date,

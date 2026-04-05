@@ -17,9 +17,10 @@ router.get('/', async (_req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { nullifierHash, imageData } = req.body;
+    const { nullifierHash, imageData, gridIndex } = req.body;
+    const parsedGridIndex = Number(gridIndex);
 
-    if (!nullifierHash || !imageData) {
+    if (!nullifierHash || !imageData || !Number.isInteger(parsedGridIndex) || parsedGridIndex < 0) {
       return res.status(400).json({ error: 'invalid_payload' });
     }
 
@@ -28,11 +29,15 @@ router.post('/', async (req, res) => {
       return res.status(409).json({ error: 'already_submitted' });
     }
 
-    const count = await Cell.countDocuments();
+    const occupiedCell = await Cell.findOne({ gridIndex: parsedGridIndex }).lean();
+    if (occupiedCell) {
+      return res.status(409).json({ error: 'cell_taken' });
+    }
+
     const created = await Cell.create({
       nullifierHash,
       imageData,
-      gridIndex: count
+      gridIndex: parsedGridIndex
     });
 
     return res.status(201).json({
@@ -41,6 +46,9 @@ router.post('/', async (req, res) => {
     });
   } catch (error) {
     if (error && error.code === 11000) {
+      if (error.keyPattern?.gridIndex) {
+        return res.status(409).json({ error: 'cell_taken' });
+      }
       return res.status(409).json({ error: 'already_submitted' });
     }
     return res.status(500).json({ error: 'server_error' });

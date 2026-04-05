@@ -1,0 +1,8 @@
+:global(.grid) {
+  background: transparent;
+  border: 2px solid var(--px-border);
+  border-radius: 0;
+  box-shadow: none;
+  gap: 1px;
+}
+

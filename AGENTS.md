@@ -7,6 +7,9 @@
 
 ## Architecture and data flow
 - Frontend state orchestration is centralized in `client/src/App.jsx`; popups are controlled by `activePopup` (`login` -> `draw` -> `confirm`).
+- `client/src/App.jsx` also owns the intro/welcome overlay (typewriter + enter transition) and background audio startup (`/public/audio/bg.mp3`), so UX timing/state changes should be coordinated there.
+- World ID modal handoff is stateful in `client/src/App.jsx`: local login popup is unmounted before `useIDKit().setOpen(true)` via `isWorldIdPending`, and dismissal restores `login` when no success/error callback resolves.
+- `BottomStatusBar` is fed from `client/src/App.jsx` (`submissionCount`, latest parsable `createdAt`) and computes the decay countdown in `client/src/components/BottomStatusBar.jsx`.
 - Grid data lifecycle lives in `client/src/hooks/useGrid.js`: initial fetch (`fetchCells`), derived dimensions (`computeGridDimensions`), zoom controls, and local append via `addCell`.
 - Session/identity lifecycle lives in `client/src/hooks/useSession.js`; `setVerifiedNullifier` preserves `hasSubmitted` only for the same nullifier.
 - API calls are funneled through `client/src/api/client.js` (`fetchCells`, `createCell`), with error normalization (`Error.message` = backend `error`, plus `error.status`).
@@ -26,11 +29,13 @@
 - Server is CommonJS (`require/module.exports`); client is ESM (`import/export`). Keep style consistent per side.
 - `GET /api/cells` intentionally omits `nullifierHash`; do not expose it unless product requirements change.
 - Grid UI disables filled cells (`client/src/components/Cell.jsx`) and derives occupancy from `gridIndex` map in `client/src/components/Grid.jsx`.
+- `activePopup` uses operational states beyond the linear flow (`idle`, `already_submitted`); preserve the `isWorldIdPending` guard so local popups do not compete with IDKit.
 - Download snapshot behavior depends on temporarily resetting transform scale in `client/src/components/DownloadButton.jsx`; preserve this when changing zoom/grid rendering.
 
 ## Integration points and external deps
 - World ID widget integration is root-mounted in `client/src/App.jsx` (`IDKitWidget`) and opened programmatically via `useIDKit` to avoid modal layering issues.
 - Required client env vars: `VITE_API_URL`, `VITE_WLD_APP_ID`, `VITE_WLD_ACTION`.
+- `client/.env.example` also includes `VITE_APP_URL` for local template scaffolding; it is not currently consumed in client runtime code.
 - Required server env vars: `MONGODB_URI`, `PORT`, `ALLOWED_ORIGIN` (plus placeholders `WLD_APP_ID`, `WLD_ACTION`).
 - CORS allowlist always includes `http://localhost:5173`; production origin is appended from `ALLOWED_ORIGIN` in `server/server.js`.
 - Drawing and export rely on `react-sketch-canvas` (`DrawPopup.jsx`) and `html2canvas` (`DownloadButton.jsx`); changes here can affect submission image fidelity.

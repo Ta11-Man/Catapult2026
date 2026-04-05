@@ -29,7 +29,7 @@ export default function App() {
 
   const handleEmptyCellClick = (gridIndex) => {
     setSelectedGridIndex(gridIndex);
-    setActivePopup('login');
+    setActivePopup('draw');
   };
 
   const closePopups = () => {

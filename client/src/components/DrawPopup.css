@@ -1,0 +1,116 @@
+/* 1. The Workspace: Creates the 'desk' background */
+.canvas-workspace {
+  background-color: #f3f4f6; /* Soft light gray */
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.preview-container {
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 2. The Frame: Creates the 'paper' effect */
+.canvas-frame {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000;
+  width: 100%;
+  max-width: 512px;
+  aspect-ratio: 1 / 1; /* Keeps it square */
+  background-color: white;
+  
+  image-rendering: optimizeQuality;
+  /* The Shadow: Multi-layered for a high-end feel */
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* The Curves: Requires overflow hidden so the canvas doesn't overlap corners */
+  border-radius: 16px;
+  overflow: hidden;
+  
+  /* Subtle border to define the white paper against light gray */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.draw-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes tools to the left and actions to the right */
+  gap: 20px;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.tool-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Make labels small and uppercase for a 'pro' look */
+.draw-controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #9ca3af;
+  gap: 4px;
+}
+
+/* Style the color inputs to be smaller circles/squares */
+.draw-controls input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  background: none;
+}
+
+.draw-controls input[type="color"]::-webkit-color-swatch {
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Style the range slider */
+.draw-controls input[type="range"] {
+  cursor: pointer;
+  accent-color: #2563eb; /* Modern blue slider */
+}
+
+/* Style the Undo/Clear buttons to look like toolbar items */
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.action-group button {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-group button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.action-group button:last-child {
+  color: #dc2626; /* Make 'Clear' red */
+}

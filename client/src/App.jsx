@@ -1,3 +1,4 @@
+import { IDKitWidget, useIDKit } from '@worldcoin/idkit';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './App.module.css';
 import Grid from './components/Grid';
@@ -10,6 +11,7 @@ import { createCell } from './api/client';
 import { useGrid } from './hooks/useGrid';
 import { useSession } from './hooks/useSession';
 
+
 export default function App() {
   const gridRef = useRef(null);
   const audioRef = useRef(null);
@@ -17,9 +19,7 @@ export default function App() {
   const {
     verifiedNullifier,
     hasSubmitted,
-    loginWithWorldId,
     createWithoutLogin,
-    worldIdResponse,
     setVerifiedNullifier,
     setHasSubmitted
   } = useSession();
@@ -27,19 +27,42 @@ export default function App() {
   const [activePopup, setActivePopup] = useState('idle');
   const [selectedGridIndex, setSelectedGridIndex] = useState(null);
   const [pendingImageData, setPendingImageData] = useState(null);
+  const [isLoginFlowActive, setIsLoginFlowActive] = useState(false);
+  const [isWorldIdPending, setIsWorldIdPending] = useState(false);
+  const worldIdResolvedRef = useRef(false);
+  const worldIdWasOpenRef = useRef(false);
+  const { open: isIdKitOpen, setOpen: setIdKitOpen } = useIDKit();
+
 
   const handleEmptyCellClick = (gridIndex) => {
     setSelectedGridIndex(gridIndex);
-    setActivePopup('draw');
+    setIsLoginFlowActive(true);
+
+    // Reuse the current page session so repeat clicks do not force relogin.
+    if (verifiedNullifier) {
+      setActivePopup(hasSubmitted ? 'already_submitted' : 'draw');
+      return;
+    }
+
+    setActivePopup('login');
   };
 
   const closePopups = () => {
     setActivePopup('idle');
     setPendingImageData(null);
     setSelectedGridIndex(null);
+    setIsLoginFlowActive(false);
+    setIsWorldIdPending(false);
+    worldIdResolvedRef.current = false;
+    worldIdWasOpenRef.current = false;
   };
 
+
   const handleVerify = ({ nullifier_hash, nullifierHash }) => {
+    if (!isLoginFlowActive || selectedGridIndex === null) {
+      return;
+    }
+
     const normalized = nullifierHash || nullifier_hash;
     if (!normalized) {
       return;
@@ -53,25 +76,74 @@ export default function App() {
     setActivePopup('draw');
   };
 
-  const handleWorldIdLogin = () => {
-    loginWithWorldId();
-    if (worldIdResponse) {
-      handleVerify(worldIdResponse);
-    }
+  const handleWorldIdSuccess = (result) => {
+    worldIdResolvedRef.current = true;
+    setIsWorldIdPending(false);
+    handleVerify(result);
   };
+
+  const handleWorldIdError = () => {
+    worldIdResolvedRef.current = true;
+    if (!isLoginFlowActive || selectedGridIndex === null) {
+      setIsWorldIdPending(false);
+      return;
+    }
+
+    // If the user dismisses IDKit, return to the same login choice screen.
+    setIsWorldIdPending(false);
+    setActivePopup('login');
+  };
+
+
+  const handleVerifyWithWorldId = () => {
+    if (!isLoginFlowActive || activePopup !== 'login') {
+      return;
+    }
+
+    // Unmount our modal first so IDKit is never layered behind it.
+    worldIdResolvedRef.current = false;
+    worldIdWasOpenRef.current = false;
+    setIsWorldIdPending(true);
+    setActivePopup('idle');
+    requestAnimationFrame(() => {
+      setIdKitOpen(true);
+    });
+  };
+
+  useEffect(() => {
+    if (!isWorldIdPending) {
+      return;
+    }
+
+    if (isIdKitOpen) {
+      worldIdWasOpenRef.current = true;
+      return;
+    }
+
+    // Wait until the widget actually opened at least once.
+    if (!worldIdWasOpenRef.current) {
+      return;
+    }
+
+    setIsWorldIdPending(false);
+
+    if (!isLoginFlowActive || selectedGridIndex === null || worldIdResolvedRef.current) {
+      return;
+    }
+
+    // Closed via X/backdrop without a success/error callback: restore login choices.
+    setActivePopup('login');
+  }, [isIdKitOpen, isWorldIdPending, isLoginFlowActive, selectedGridIndex]);
 
   const handleCreateWithoutLogin = () => {
     createWithoutLogin();
-    if (worldIdResponse) {
-      handleVerify(worldIdResponse);
-    }
+    setActivePopup('draw');
   };
 
   const handleDrawSubmit = (imageData) => {
     setPendingImageData(imageData);
     setActivePopup('confirm');
   };
-
   const handleConfirm = async () => {
     if (!verifiedNullifier || !pendingImageData || selectedGridIndex === null) {
       closePopups();
@@ -81,13 +153,14 @@ export default function App() {
     try {
       const created = await createCell({
         nullifierHash: verifiedNullifier,
-        imageData: pendingImageData
+        imageData: pendingImageData,
+        gridIndex: selectedGridIndex
       });
       addCell(created);
       setHasSubmitted(true);
       closePopups();
     } catch (error) {
-      if (error.status === 409) {
+      if (error.status === 409 && error.message === 'already_submitted') {
         setHasSubmitted(true);
         setActivePopup('already_submitted');
         return;
@@ -102,7 +175,6 @@ export default function App() {
     }
     return `${beta} days from ${new Date(latestCreatedAt).toLocaleString()}`;
   }, [beta, latestCreatedAt]);
-
   useEffect(() => {
     const audio = new Audio('/audio/bg.mp3');
     audio.loop = true;
@@ -164,10 +236,22 @@ export default function App() {
 
       <DownloadButton gridRef={gridRef} />
 
-      {activePopup === 'login' && (
+      {/* keep root-mounted widget */}
+      <IDKitWidget
+           app_id={import.meta.env.VITE_WLD_APP_ID}
+           action={import.meta.env.VITE_WLD_ACTION}
+           onSuccess={handleWorldIdSuccess}
+           onError={handleWorldIdError}
+           verification_level="device"
+       >
+         {() => null}
+       </IDKitWidget>
+
+
+      {activePopup === 'login' && !isWorldIdPending && (
         <LoginPopup
           onClose={closePopups}
-          onVerify={handleWorldIdLogin}
+          onVerifyWithWorldId={handleVerifyWithWorldId}
           onCreateWithoutLogin={handleCreateWithoutLogin}
         />
       )}

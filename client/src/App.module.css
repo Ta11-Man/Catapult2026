@@ -35,8 +35,8 @@
 }
 
 .welcomeOverlayExit {
+  transition: opacity 1200ms ease-in;
   opacity: 0;
-  transform: translateY(-12px);
 }
 
 .welcomeContent {
@@ -53,6 +53,16 @@
   letter-spacing: 0.01em;
 }
 
+.cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1em;
+  background: currentColor;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  animation: blink 800ms steps(1, end) infinite;
+}
+
 .welcomeEnterButton {
   width: 88px;
   height: 88px;
@@ -63,6 +73,17 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+}
+
+.enterButtonHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.enterButtonVisible {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 700ms ease-in;
 }
 
 .welcomeEnterButton:hover {
@@ -200,3 +221,13 @@
   font-size: 18px;
 }
 
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}

@@ -28,6 +28,7 @@ export default function App() {
     setHasSubmitted
   } = useSession();
 
+  const [focusedCell, setFocusedCell] = useState(null);
   const [activePopup, setActivePopup] = useState('idle');
   const [selectedGridIndex, setSelectedGridIndex] = useState(null);
   const [pendingImageData, setPendingImageData] = useState(null);
@@ -102,6 +103,14 @@ export default function App() {
     };
   }, [isWelcomeOverlayExiting, INTRO_EXIT_MS]);
 
+  const handleFilledCellClick = (index, imageData, rect) => {
+    if (focusedCell?.index === index) {
+      setFocusedCell(null);
+    } else {
+      setFocusedCell({ index, imageData, rect });
+    }
+  };
+
   const closePopups = () => {
     setActivePopup('idle');
     setPendingImageData(null);
@@ -166,27 +175,25 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (!isWorldIdPending) {
+    if (!focusedCell) {
       return;
     }
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setFocusedCell(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [focusedCell]);
 
+  useEffect(() => {
+    if (!isWorldIdPending) return;
     if (isIdKitOpen) {
       worldIdWasOpenRef.current = true;
       return;
     }
-
-    // Wait until the widget actually opened at least once.
-    if (!worldIdWasOpenRef.current) {
-      return;
-    }
-
+    if (!worldIdWasOpenRef.current) return;
     setIsWorldIdPending(false);
-
-    if (!isLoginFlowActive || selectedGridIndex === null || worldIdResolvedRef.current) {
-      return;
-    }
-
-    // Closed via X/backdrop without a success/error callback: restore login choices.
+    if (!isLoginFlowActive || selectedGridIndex === null || worldIdResolvedRef.current) return;
     setActivePopup('login');
   }, [isIdKitOpen, isWorldIdPending, isLoginFlowActive, selectedGridIndex]);
 
@@ -357,9 +364,13 @@ export default function App() {
         zoomLevel={zoomLevel}
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
+        focusedCellIndex={focusedCell?.index ?? null}
         onEmptyCellClick={handleEmptyCellClick}
+        onFilledCellClick={handleFilledCellClick}
+        onClose={() => setFocusedCell(null)}
         gridRef={gridRef}
       />
+
 
 
       {/* keep root-mounted widget */}

@@ -10,7 +10,6 @@
   font-family: var(--px-font-body);
 }
 
-
 .app {
   --bottom-status-reserve: 72px;
   display: flex;
@@ -31,7 +30,9 @@
   justify-content: center;
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 350ms ease, transform 350ms ease;
+  transition:
+    opacity 350ms ease,
+    transform 350ms ease;
 }
 
 .welcomeOverlayExit {
@@ -106,15 +107,72 @@
 :global(.grid) {
   display: grid;
   gap: 0;
+  transition: transform 540ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:global(.grid.is-focusing .cell) {
+  transition:
+    transform 540ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 540ms ease,
+    opacity 540ms ease;
+}
+
+:global(.grid.is-focusing .cell.defocused) {
+  transform: translate(14px, 42px);
+}
+
+:global(.grid.is-focusing .cell:not(.defocused)) {
+  background: var(--px-bg);
+}
+
+/* Expand faces on focused cell */
+:global(.grid.is-focusing .cell:not(.defocused))::before {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 14px 100%);
+}
+
+:global(.grid.is-focusing .cell:not(.defocused))::after {
+  clip-path: polygon(0 0, 100% 42px, 100% 100%, 0 calc(100% - 42px));
 }
 
 :global(.cell) {
+  position: relative;
+  transition:
+    transform 540ms ease,
+    filter 540ms ease,
+    opacity 540ms ease;
   border: 1px dashed var(--px-divider);
   background: transparent;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Column faces — always present (collapsed) so transitions can fire */
+:global(.cell)::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: calc(100% + 14px);
+  height: 42px;
+  background: var(--px-amber-dark);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, calc(100% - 14px) 0, 0 0);
+  pointer-events: none;
+  transition: clip-path 540ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:global(.cell)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 14px;
+  height: calc(100% + 42px);
+  background: var(--px-deep);
+  clip-path: polygon(0 0, 0 0, 0 calc(100% - 42px), 0 calc(100% - 42px));
+  pointer-events: none;
+  transition: clip-path 540ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :global(.cell img) {
@@ -160,9 +218,9 @@
 }
 
 :global(.destructive) {
-  background: #C0392B;
+  background: #c0392b;
   color: var(--px-bg);
-  border-color: #C0392B;
+  border-color: #c0392b;
 }
 
 :global(.ghost) {

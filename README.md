@@ -26,7 +26,7 @@ cd client
 npm install
 cp .env.example .env.local
 
-cd server
+cd ../server
 npm install
 cp .env.example .env
 ```

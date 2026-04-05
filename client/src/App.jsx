@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './App.module.css';
 import Grid from './components/Grid';
 import LoginPopup from './components/LoginPopup';
@@ -12,6 +12,7 @@ import { useSession } from './hooks/useSession';
 
 export default function App() {
   const gridRef = useRef(null);
+  const audioRef = useRef(null);
   const { cells, gridCols, gridRows, zoomLevel, beta, latestCreatedAt, addCell, zoomIn, zoomOut } = useGrid();
   const {
     verifiedNullifier,
@@ -101,6 +102,46 @@ export default function App() {
     }
     return `${beta} days from ${new Date(latestCreatedAt).toLocaleString()}`;
   }, [beta, latestCreatedAt]);
+
+  useEffect(() => {
+    const audio = new Audio('/audio/bg.mp3');
+    audio.loop = true;
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    const tryPlay = () => {
+      if (!audioRef.current) {
+        return;
+      }
+      audioRef.current.play().catch(() => {
+        // Browser may block autoplay until user interacts.
+      });
+    };
+
+    tryPlay();
+
+    const onFirstInteraction = () => {
+      tryPlay();
+      window.removeEventListener('click', onFirstInteraction);
+      window.removeEventListener('keydown', onFirstInteraction);
+      window.removeEventListener('touchstart', onFirstInteraction);
+    };
+
+    window.addEventListener('click', onFirstInteraction);
+    window.addEventListener('keydown', onFirstInteraction);
+    window.addEventListener('touchstart', onFirstInteraction);
+
+    return () => {
+      window.removeEventListener('click', onFirstInteraction);
+      window.removeEventListener('keydown', onFirstInteraction);
+      window.removeEventListener('touchstart', onFirstInteraction);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className={styles.app}>

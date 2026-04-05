@@ -1,233 +1,157 @@
-:global(*) {
-  box-sizing: border-box;
-}
-
-:global(body) {
-  margin: 0;
+.app {
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   background: var(--px-bg);
-  color: var(--px-darkest);
-  font-family: var(--px-font-body);
-}
-
-
-.app {
-  --bottom-status-reserve: 72px;
+  color: var(--px-text);
+  position: relative;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  position: relative;
-  padding-bottom: var(--bottom-status-reserve);
-}
-
-.welcomeOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: rgba(12, 19, 22, 0.92);
-  color: var(--px-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 350ms ease, transform 350ms ease;
-}
-
-.welcomeOverlayExit {
-  transition: opacity 1200ms ease-in;
-  opacity: 0;
-}
-
-.welcomeContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-}
-
-.welcomeTitle {
-  margin: 0;
-  font-size: clamp(1.4rem, 3.5vw, 2.1rem);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.cursor {
-  display: inline-block;
-  width: 10px;
-  height: 1em;
-  background: currentColor;
-  margin-left: 3px;
-  vertical-align: text-bottom;
-  animation: blink 800ms steps(1, end) infinite;
-}
-
-.welcomeEnterButton {
-  width: 88px;
-  height: 88px;
-  border-radius: 0;
-  border: 1px solid var(--px-bg);
-  background: var(--px-bg);
-  color: var(--px-darkest);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.enterButtonHidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.enterButtonVisible {
-  opacity: 1;
-  pointer-events: auto;
-  transition: opacity 700ms ease-in;
-}
-
-.welcomeEnterButton:hover {
-  background: var(--px-bg);
 }
 
 :global(.grid-shell) {
+  flex: 1;
   position: relative;
+  overflow: hidden;
+  background: var(--px-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+:global(.zoom-controls) {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  pointer-events: auto;
+}
+
+:global(.zoom-controls button) {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+  line-height: 1;
+}
+
+:global(.zoom-controls button:hover) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+:global(.zoom-controls span) {
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 :global(.grid-scroll) {
-  overflow: hidden;
-  width: 100vw;
-  height: calc(100vh - var(--bottom-status-reserve));
+  flex: 1;
+  overflow: auto;
+  cursor: grab;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 100px;
+}
+
+:global(.grid-scroll:active) {
+  cursor: grabbing;
+}
+
+/* Hide scrollbars but allow scrolling */
+:global(.grid-scroll::-webkit-scrollbar) {
+  display: none;
+}
+:global(.grid-scroll) {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 :global(.grid) {
   display: grid;
   gap: 0;
+  transition: transform 540ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-:global(.cell) {
-  border: 1px dashed var(--px-divider);
-  background: transparent;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+:global(.grid.is-focusing .cell) {
+  transition:
+    transform 540ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 540ms ease,
+    opacity 540ms ease;
 }
 
-:global(.cell img) {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-:global(.cell.empty span) {
-  opacity: 0;
-  font-size: 48px;
-  color: var(--px-text-muted);
-}
-
-:global(.cell.empty:hover span) {
-  opacity: 0.5;
-}
-
-:global(.zoom-controls) {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-:global(.zoom-controls button),
-:global(.download-button),
-:global(.primary),
-:global(.destructive),
-:global(.ghost) {
-  border-radius: 0;
-  border: 1px solid var(--px-darkest);
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-:global(.primary) {
-  background: var(--px-darkest);
-  color: var(--px-bg);
-}
-
-:global(.destructive) {
-  background: #C0392B;
-  color: var(--px-bg);
-  border-color: #C0392B;
-}
-
-:global(.ghost) {
-  background: transparent;
-  color: var(--px-darkest);
-}
-
-:global(.download-button) {
-  right: 16px;
-  bottom: 16px;
-  z-index: 20;
-  background: var(--px-darkest);
-  color: var(--px-bg);
-}
-
-:global(.modal-overlay) {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-}
-
-:global(.modal) {
-  width: min(90vw, 620px);
+:global(.grid.is-focusing .cell:not(.defocused)) {
+  z-index: 1000;
   background: var(--px-bg);
-  border-radius: 0;
-  box-shadow: 4px 4px 0 var(--px-deep);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: relative;
 }
 
-:global(.draw-modal) {
-  width: min(95vw, 700px);
+:global(.grid.is-focusing .cell.defocused) {
+  opacity: 0.8;
+  pointer-events: none;
 }
 
-:global(.draw-controls) {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-:global(.close) {
+:global(.grid.is-focusing .cell:not(.defocused)::before),
+:global(.grid.is-focusing .cell:not(.defocused)::after) {
+  content: "";
   position: absolute;
-  top: 10px;
-  right: 10px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
+  background: var(--px-bg);
+  pointer-events: none;
+  transition: transform 540ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
+:global(.grid.is-focusing .cell:not(.defocused)::before) {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: #111;
+  transform-origin: top;
+  transform: skewX(-45deg) scaleY(0);
+  animation: slideTop 540ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
 
-  50% {
-    opacity: 0;
+:global(.grid.is-focusing .cell:not(.defocused)::after) {
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: #080808;
+  transform-origin: right;
+  transform: skewY(-45deg) scaleX(0);
+  animation: slideRight 540ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideTop {
+  to {
+    transform: translateY(-20px) skewX(-45deg) scaleY(1);
+  }
+}
+
+@keyframes slideRight {
+  to {
+    transform: translateX(20px) skewY(-45deg) scaleX(1);
   }
 }

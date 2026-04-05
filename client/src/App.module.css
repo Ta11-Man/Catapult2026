@@ -10,10 +10,35 @@
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+.topBar {
+  height: 64px;
+  min-height: 64px; /* Ensure it doesn't shrink */
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+}
+
+.stats {
+  /* Remove top: 16px, left: 16px, and position: fixed */
+  display: flex;
+  gap: 20px;
+  background: transparent; /* Remove the old white bubble look */
+  border: none;
+  padding: 0;
+  min-width: auto;
+  align-items: center;
+}
+
 .app {
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   position: relative;
-  padding: 16px;
+  /* padding: 16px; */
 }
 
 :global(.grid-shell) {
@@ -22,8 +47,8 @@
 
 :global(.grid-scroll) {
   overflow: hidden;
-  width: calc(100vw - 32px);
-  height: calc(100vh - 32px);
+  width: 100vw;
+  height: calc(100vh - 64px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,7 +122,6 @@
 }
 
 :global(.download-button) {
-  position: fixed;
   right: 16px;
   bottom: 16px;
   z-index: 20;
@@ -148,14 +172,9 @@
   font-size: 18px;
 }
 
-.stats {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 20;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  min-width: 220px;
+.stats div {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
 }
+

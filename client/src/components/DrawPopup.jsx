@@ -7,7 +7,7 @@ export default function DrawPopup({ onClose, onSubmit }) {
   const sketchRef = useRef(null);
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [bg, setBg] = useState('#ffffff');
-  const [strokeWidth, setStrokeWidth] = useState(4);
+  const [strokeWidth, setStrokeWidth] = useState(15);
   const [backgroundImage, setBackgroundImage] = useState(null);
 
   const handleSubmit = async () => {
@@ -54,8 +54,8 @@ export default function DrawPopup({ onClose, onSubmit }) {
             Stroke
             <input
               type="range"
-              min="5"
-              max="20"
+              min="10"
+              max="30"
               value={strokeWidth}
               onChange={(e) => setStrokeWidth(Number(e.target.value))}
             />

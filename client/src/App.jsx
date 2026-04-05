@@ -6,7 +6,7 @@ import LoginPopup from './components/LoginPopup';
 import DrawPopup from './components/DrawPopup';
 import ConfirmPopup from './components/ConfirmPopup';
 import AlreadySubmittedPopup from './components/AlreadySubmittedPopup';
-import DownloadButton from './components/DownloadButton';
+import BottomStatusBar from './components/BottomStatusBar';
 import { createCell } from './api/client';
 import { useGrid } from './hooks/useGrid';
 import { useSession } from './hooks/useSession';
@@ -16,7 +16,7 @@ export default function App() {
   const INTRO_EXIT_MS = 350;
   const gridRef = useRef(null);
   const audioRef = useRef(null);
-  const { cells, gridCols, gridRows, zoomLevel, beta, latestCreatedAt, addCell, zoomIn, zoomOut } = useGrid();
+  const { cells, gridCols, gridRows, zoomLevel, addCell, zoomIn, zoomOut } = useGrid();
   const {
     verifiedNullifier,
     hasSubmitted,
@@ -35,6 +35,22 @@ export default function App() {
   const worldIdResolvedRef = useRef(false);
   const worldIdWasOpenRef = useRef(false);
   const { open: isIdKitOpen, setOpen: setIdKitOpen } = useIDKit();
+
+  const submissionCount = cells.length;
+  const lastSubmissionDate = useMemo(() => {
+    let latestTimestamp = -Infinity;
+    let latestDate = null;
+
+    for (const cell of cells) {
+      const timestamp = Date.parse(cell?.createdAt);
+      if (Number.isFinite(timestamp) && timestamp > latestTimestamp) {
+        latestTimestamp = timestamp;
+        latestDate = cell.createdAt;
+      }
+    }
+
+    return latestDate;
+  }, [cells]);
 
 
   const handleEmptyCellClick = (gridIndex) => {
@@ -202,12 +218,6 @@ export default function App() {
     }
   };
 
-  const nextDecayText = useMemo(() => {
-    if (!latestCreatedAt) {
-      return `${beta} days from last submission`;
-    }
-    return `${beta} days from ${new Date(latestCreatedAt).toLocaleString()}`;
-  }, [beta, latestCreatedAt]);
   useEffect(() => {
     const audio = new Audio('/audio/bg.mp3');
     audio.loop = true;
@@ -270,19 +280,11 @@ export default function App() {
         </div>
       )}
 
-      <header className={styles.topBar}>
-        <div className={styles.stats}>
-          {/* <div>Cells: {cells.length}</div>
-          <div>beta = {beta} days</div>
-          <div>Next decay in: {nextDecayText}</div> */}
-          <div>Welcome to reef... time to decay: {nextDecayText}</div>
-        </div>
-        <div className={styles.actions}>
-          <DownloadButton gridRef={gridRef} />
-        </div>
+      <BottomStatusBar
+        submissionCount={submissionCount}
+        lastSubmissionDate={lastSubmissionDate}
+      />
 
-      </header>
-      
 
       <Grid
         cells={cells}

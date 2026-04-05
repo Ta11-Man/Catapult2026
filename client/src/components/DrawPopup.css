@@ -15,15 +15,33 @@
   justify-content: center;
 }
 
+.draw-overlay {
+  align-items: flex-start;
+  padding: 12px 12px calc(var(--bottom-status-reserve, 72px) + 12px);
+}
+
+.draw-modal {
+  width: min(90vw, 590px);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 14px;
+  gap: 10px;
+}
+
+.draw-modal h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
 .upload-button {
   background: var(--px-bg);
   border: 1px dashed var(--px-divider);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 0;
   cursor: pointer;
-  font-size: 11px !important; /* Keep it small like the others */
+  font-size: 11px;
   transition: all 0.2s;
-  color: var(--px-text-muted) !important;
+  color: var(--px-text-muted);
 }
 
 .upload-button:hover {
@@ -45,8 +63,7 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000;
-  width: 100%;
-  max-width: 512px;
+  width: min(100%, 400px);
   aspect-ratio: 1 / 1; /* Keeps it square */
   background-color: var(--px-bg);
 
@@ -62,22 +79,38 @@
   border: 1px solid var(--px-divider);
 }
 
+.canvas {
+  display: flex;
+  justify-content: center;
+}
+
 .draw-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Pushes tools to the left and actions to the right */
-  gap: 20px;
-  margin-bottom: 24px;
-  padding: 12px 16px;
+  justify-content: flex-start;
+  gap: 14px;
+  margin-bottom: 8px;
+  padding: 10px 12px;
   background: var(--px-bg);
   border: 1px solid var(--px-divider);
   border-radius: 0;
+  flex-wrap: wrap;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
 .tool-group {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* Make labels small and uppercase for a 'pro' look */
@@ -115,14 +148,15 @@
 .action-group {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .action-group button {
   background: var(--px-bg);
   border: 1px solid var(--px-divider);
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -135,4 +169,37 @@
 
 .action-group button:last-child {
   color: #dc2626; /* Make 'Clear' red */
+}
+
+@media (max-width: 640px) {
+  .draw-overlay {
+    padding: 8px 8px calc(var(--bottom-status-reserve, 72px) + 8px);
+  }
+
+  .draw-modal {
+    width: min(95vw, 590px);
+    max-height: 100%;
+    padding: 10px;
+  }
+
+  .draw-controls {
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  .draw-controls label {
+    font-size: 9px;
+  }
+
+  .draw-controls input[type="range"] {
+    width: 120px;
+  }
+
+  .canvas-frame {
+    width: min(100%, 320px);
+  }
+
+  .toolbar-row {
+    justify-content: flex-start;
+  }
 }

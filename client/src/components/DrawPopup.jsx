@@ -2,16 +2,38 @@ import { useRef, useState } from 'react';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import './DrawPopup.css';
 
+
 export default function DrawPopup({ onClose, onSubmit }) {
   const sketchRef = useRef(null);
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [bg, setBg] = useState('#ffffff');
   const [strokeWidth, setStrokeWidth] = useState(4);
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   const handleSubmit = async () => {
     if (!sketchRef.current) return;
     const imageData = await sketchRef.current.exportImage('png');
     onSubmit(imageData);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // // Validation: Check if it's square (optional)
+          // if (img.width !== img.height) {
+          //   alert("Please upload a square image (1:1 aspect ratio).");
+          //   return;
+          // }
+          setBackgroundImage(event.target.result);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -32,7 +54,7 @@ export default function DrawPopup({ onClose, onSubmit }) {
             Stroke
             <input
               type="range"
-              min="1"
+              min="5"
               max="20"
               value={strokeWidth}
               onChange={(e) => setStrokeWidth(Number(e.target.value))}
@@ -49,6 +71,22 @@ export default function DrawPopup({ onClose, onSubmit }) {
             />
           </div>
         </div>
+        <div className="tool-group">
+          <label className="upload-button">
+            Upload Image
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageUpload} 
+              style={{ display: 'none' }} 
+            />
+          </label>
+          {backgroundImage && (
+            <button type="button" onClick={() => setBackgroundImage(null)} className="remove-bg">
+              Remove Image
+            </button>
+          )}
+        </div>
         <div className='action-group'>
           <button type="button" onClick={() => sketchRef.current?.undo()}>Undo</button>
           <button type="button" onClick={() => sketchRef.current?.clearCanvas()}>Clear</button>
@@ -61,6 +99,7 @@ export default function DrawPopup({ onClose, onSubmit }) {
               height="100%"
               strokeWidth={strokeWidth}
               strokeColor={strokeColor}
+              backgroundImage={backgroundImage}
               canvasColor={bg}
               allowOnlyPointerType="all"
               style={{ border: 'none' }}

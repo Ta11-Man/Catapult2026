@@ -13,7 +13,10 @@ import { useSession } from './hooks/useSession';
 
 
 export default function App() {
-  const INTRO_EXIT_MS = 350;
+  const INTRO_EXIT_MS = 1300;
+  const OVERLAY_HEADING = 'WELCOME TO THE REEF EXPERIENCE';
+  const TYPEWRITER_STEP_MS = 145;
+  const ENTER_BUTTON_DELAY_MS = 600;
   const gridRef = useRef(null);
   const audioRef = useRef(null);
   const { cells, gridCols, gridRows, zoomLevel, addCell, zoomIn, zoomOut } = useGrid();
@@ -32,6 +35,9 @@ export default function App() {
   const [isWorldIdPending, setIsWorldIdPending] = useState(false);
   const [isWelcomeOverlayVisible, setIsWelcomeOverlayVisible] = useState(true);
   const [isWelcomeOverlayExiting, setIsWelcomeOverlayExiting] = useState(false);
+  const [displayedText, setDisplayedText] = useState('');
+  const [typingDone, setTypingDone] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const worldIdResolvedRef = useRef(false);
   const worldIdWasOpenRef = useRef(false);
   const { open: isIdKitOpen, setOpen: setIdKitOpen } = useIDKit();
@@ -258,6 +264,61 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isWelcomeOverlayVisible) {
+      return;
+    }
+
+    setDisplayedText('');
+    setTypingDone(false);
+    setShowButton(false);
+
+    let timeoutId;
+
+    const typeAtIndex = (index) => {
+      timeoutId = window.setTimeout(() => {
+        const nextIndex = index + 1;
+        setDisplayedText(OVERLAY_HEADING.slice(0, nextIndex));
+
+        if (nextIndex >= OVERLAY_HEADING.length) {
+          setTypingDone(true);
+          return;
+        }
+
+        typeAtIndex(nextIndex);
+      }, TYPEWRITER_STEP_MS);
+    };
+
+    typeAtIndex(0);
+
+    return () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!typingDone) {
+      setShowButton(false);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowButton(true);
+    }, ENTER_BUTTON_DELAY_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [typingDone]);
+
+  useEffect(() => {
+    if (isWelcomeOverlayExiting) {
+      setShowButton(false);
+    }
+  }, [isWelcomeOverlayExiting]);
+
   return (
     <div className={styles.app}>
       {isWelcomeOverlayVisible && (
@@ -268,10 +329,13 @@ export default function App() {
           aria-label="Welcome to the Reef Experience"
         >
           <div className={styles.welcomeContent}>
-            <h1 className={styles.welcomeTitle}>Welcome to the Reef Experience</h1>
+            <h1 className={styles.welcomeTitle}>
+              {displayedText}
+              {!isWelcomeOverlayExiting && <span className={styles.cursor} aria-hidden="true" />}
+            </h1>
             <button
               type="button"
-              className={styles.welcomeEnterButton}
+              className={`${styles.welcomeEnterButton} ${showButton ? styles.enterButtonVisible : styles.enterButtonHidden}`}
               onClick={handleEnterExperience}
             >
               Enter

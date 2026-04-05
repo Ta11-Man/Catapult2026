@@ -7,7 +7,6 @@ import DrawPopup from './components/DrawPopup';
 import ConfirmPopup from './components/ConfirmPopup';
 import AlreadySubmittedPopup from './components/AlreadySubmittedPopup';
 import BottomStatusBar from './components/BottomStatusBar';
-import CellFocusOverlay from './components/CellFocusOverlay';
 import { createCell } from './api/client';
 import { useGrid } from './hooks/useGrid';
 import { useSession } from './hooks/useSession';
@@ -105,7 +104,11 @@ export default function App() {
   }, [isWelcomeOverlayExiting, INTRO_EXIT_MS]);
 
   const handleFilledCellClick = (index, imageData, rect) => {
-    setFocusedCell({ index, imageData, rect });
+    if (focusedCell?.index === index) {
+      setFocusedCell(null);
+    } else {
+      setFocusedCell({ index, imageData, rect });
+    }
   };
 
   const closePopups = () => {
@@ -172,27 +175,25 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (!isWorldIdPending) {
+    if (!focusedCell) {
       return;
     }
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setFocusedCell(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [focusedCell]);
 
+  useEffect(() => {
+    if (!isWorldIdPending) return;
     if (isIdKitOpen) {
       worldIdWasOpenRef.current = true;
       return;
     }
-
-    // Wait until the widget actually opened at least once.
-    if (!worldIdWasOpenRef.current) {
-      return;
-    }
-
+    if (!worldIdWasOpenRef.current) return;
     setIsWorldIdPending(false);
-
-    if (!isLoginFlowActive || selectedGridIndex === null || worldIdResolvedRef.current) {
-      return;
-    }
-
-    // Closed via X/backdrop without a success/error callback: restore login choices.
+    if (!isLoginFlowActive || selectedGridIndex === null || worldIdResolvedRef.current) return;
     setActivePopup('login');
   }, [isIdKitOpen, isWorldIdPending, isLoginFlowActive, selectedGridIndex]);
 
@@ -366,10 +367,11 @@ export default function App() {
         focusedCellIndex={focusedCell?.index ?? null}
         onEmptyCellClick={handleEmptyCellClick}
         onFilledCellClick={handleFilledCellClick}
+        onClose={() => setFocusedCell(null)}
         gridRef={gridRef}
       />
 
-      <CellFocusOverlay focusedCell={focusedCell} onClose={() => setFocusedCell(null)} />
+
 
       {/* keep root-mounted widget */}
       <IDKitWidget

@@ -107,6 +107,7 @@
 :global(.grid) {
   display: grid;
   gap: 0;
+  transition: transform 540ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :global(.grid.is-focusing .cell) {
@@ -118,8 +119,6 @@
 
 :global(.grid.is-focusing .cell.defocused) {
   transform: translate(14px, 42px);
-  filter: blur(3.5px) brightness(0.32);
-  opacity: 0.6;
 }
 
 :global(.grid.is-focusing .cell:not(.defocused)) {

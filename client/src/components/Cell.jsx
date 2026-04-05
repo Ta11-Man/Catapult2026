@@ -2,6 +2,7 @@ export default function Cell({ imageData, onClick, onFilledCellClick, cellWidth,
   const isFilled = Boolean(imageData);
 
   const handleFilledClick = (e) => {
+    e.stopPropagation();
     if (onFilledCellClick) {
       onFilledCellClick(imageData, e.currentTarget.getBoundingClientRect());
     }
@@ -12,7 +13,7 @@ export default function Cell({ imageData, onClick, onFilledCellClick, cellWidth,
       type="button"
       className={`cell${isFilled ? ' filled' : ' empty'}${isDefocused ? ' defocused' : ''}`}
       style={{ width: cellWidth, height: cellHeight }}
-      onClick={isFilled ? handleFilledClick : onClick}
+      onClick={isFilled ? handleFilledClick : (e) => { e.stopPropagation(); onClick(); }}
       aria-label={isFilled ? 'View submitted drawing' : 'Empty cell'}
     >
       {isFilled

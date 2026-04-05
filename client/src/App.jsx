@@ -58,6 +58,50 @@ export default function App() {
     return latestDate;
   }, [cells]);
 
+  // 1. ADD DRAGGING STATE
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const lastMousePos = useRef({ x: 0, y: 0 });
+
+  // 2. RE-ADD THE WHEEL ZOOM EFFECT
+  useEffect(() => {
+    const gridContainer = gridRef.current;
+    if (!gridContainer) return;
+
+    const onWheel = (e) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        
+        // deltaY > 0 means scrolling down (Zoom Out)
+        // deltaY < 0 means scrolling up (Zoom In)
+        if (e.deltaY > 0) {
+          zoomOut();
+        } else {
+          zoomIn();
+        }
+      }
+    };
+
+    gridContainer.addEventListener('wheel', onWheel, { passive: false });
+    return () => gridContainer.removeEventListener('wheel', onWheel);
+  }, [zoomIn]);
+
+  // 3. ADD MOUSE HANDLERS
+  const handleMouseDown = (e) => {
+    if (e.button !== 0) return; // Left click only
+    setIsDragging(true);
+    lastMousePos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - lastMousePos.current.x;
+    const dy = e.clientY - lastMousePos.current.y;
+    setOffset((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+    lastMousePos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
 
   const handleEmptyCellClick = (gridIndex) => {
     setSelectedGridIndex(gridIndex);
@@ -344,23 +388,21 @@ export default function App() {
         </div>
       )}
 
-      <BottomStatusBar
-        submissionCount={submissionCount}
-        lastSubmissionDate={lastSubmissionDate}
-      />
-
-
       <Grid
         cells={cells}
         gridCols={gridCols}
         gridRows={gridRows}
         zoomLevel={zoomLevel}
+        offset={offset}               // Pass offset
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
         onEmptyCellClick={handleEmptyCellClick}
         gridRef={gridRef}
+        onMouseDown={handleMouseDown} // Pass handlers
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       />
-
 
       {/* keep root-mounted widget */}
       <IDKitWidget
@@ -391,6 +433,11 @@ export default function App() {
         />
       )}
       {activePopup === 'already_submitted' && <AlreadySubmittedPopup onClose={closePopups} />}
+
+       <BottomStatusBar
+        submissionCount={submissionCount}
+        lastSubmissionDate={lastSubmissionDate}
+      />
     </div>
   );
 }

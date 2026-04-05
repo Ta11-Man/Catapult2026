@@ -16,8 +16,36 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Prevent the whole page from scrolling */
   position: relative;
-  padding-bottom: var(--bottom-status-reserve);
+}
+
+:global(.grid-scroll) {
+  flex: 1; /* This tells the grid to take up all AVAILABLE space, but no more */
+  overflow: hidden;
+  position: relative;
+  width: 100vw;
+  /* Remove the hardcoded calc(100vh...) here so flex-grow handles it */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+/* Ensure the footer stays at the bottom and has a higher z-index */
+:global(.bottom-status-bar) {
+  height: var(--bottom-status-reserve);
+  width: 100%;
+  position: fixed; /* Changed from relative to fixed */
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Higher than grid (0) but lower than Welcome Overlay (200) */
+  background: var(--px-bg);
+  border-top: 1px solid var(--px-divider);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
 }
 
 .welcomeOverlay {
@@ -94,14 +122,6 @@
   position: relative;
 }
 
-:global(.grid-scroll) {
-  overflow: hidden;
-  width: 100vw;
-  height: calc(100vh - var(--bottom-status-reserve));
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 :global(.grid) {
   display: grid;
@@ -121,6 +141,8 @@
   display: block;
   width: 100%;
   height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 :global(.cell.empty span) {

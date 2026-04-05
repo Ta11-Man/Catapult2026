@@ -95,7 +95,6 @@
 
 /* Style the color inputs to be smaller circles/squares */
 .draw-controls input[type="color"] {
-  -webkit-appearance: none;
   border: none;
   width: 28px;
   height: 28px;

@@ -1,0 +1,143 @@
+:root {
+  --px-bg: #f5ead5;
+  --px-surface: #ede0c4;
+  --px-surface-2: #dfd0ae;
+  --px-divider: #c8b89a;
+  --px-border: #a08060;
+
+  --px-text: #2d1b0e;
+  --px-text-muted: #6b4a2e;
+  --px-text-faint: #a07858;
+
+  --px-amber: #c8882a;
+  --px-amber-light: #e8b86d;
+  --px-amber-dark: #8a5810;
+  --px-deep: #3d2200;
+  --px-darkest: #1a0f00;
+
+  --px-1: 8px;
+  --px-2: 16px;
+  --px-3: 24px;
+  --px-4: 32px;
+  --px-5: 40px;
+  --px-6: 48px;
+
+  --px-text-xs: 10px;
+  --px-text-sm: clamp(11px, 0.7rem + 0.3vw, 14px);
+  --px-text-base: clamp(12px, 0.75rem + 0.4vw, 16px);
+  --px-text-lg: 16px;
+  --px-text-xl: 24px;
+  --px-text-2xl: 32px;
+
+  --px-font-display: 'Pixelify Sans', 'Courier New', monospace;
+  --px-font-body: 'Pixelify Sans', 'Courier New', monospace;
+
+  --px-transition: 150ms steps(3, end);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: var(--px-font-body);
+  font-size: var(--px-text-base);
+  color: var(--px-text);
+  background-color: var(--px-bg);
+  min-height: 100dvh;
+  line-height: 1.5;
+  background-image: repeating-conic-gradient(
+    var(--px-surface) 0% 25%,
+    var(--px-bg) 0% 50%
+  );
+  background-size: 16px 16px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+.btn {
+  text-transform: uppercase;
+  font-family: var(--px-font-display);
+  letter-spacing: 0.05em;
+}
+
+html,
+body,
+* {
+  cursor: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' shape-rendering='crispEdges'%3E%3Cpath d='M1 1h2v2H1zM1 3h2v2H1zM1 5h2v2H1zM1 7h2v2H1zM1 9h2v2H1zM3 3h2v2H3zM3 5h2v2H3zM5 5h2v2H5zM5 7h2v2H5zM3 9h2v2H3zM5 9h2v2H5zM7 7h2v2H7z' fill='%231a0f00'/%3E%3C/svg%3E") 1 1, default;
+}
+
+a,
+button,
+[role='button'] {
+  cursor: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' shape-rendering='crispEdges'%3E%3Cpath d='M4 1h2v10H4zM6 3h2v2H6zM8 5h2v2H8zM6 7h2v2H6zM8 7h2v2H8z' fill='%231a0f00'/%3E%3C/svg%3E") 4 1, pointer;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--px-surface-2);
+  border-left: 2px solid var(--px-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--px-amber);
+  border: 2px solid var(--px-deep);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--px-amber-light);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--px-amber) var(--px-surface-2);
+}
+
+:focus-visible {
+  outline: 2px dashed var(--px-amber);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
+::selection {
+  background: var(--px-amber);
+  color: var(--px-darkest);
+}
+
+a,
+button,
+[role='button'],
+input,
+textarea,
+select {
+  transition: color var(--px-transition), background var(--px-transition), border-color var(--px-transition);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

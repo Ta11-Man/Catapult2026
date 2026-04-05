@@ -1,0 +1,31 @@
+:global(.cell) {
+  border-radius: 0;
+  box-shadow: none;
+  filter: none;
+}
+
+:global(.cell:hover),
+:global(.cell:focus-visible) {
+  box-shadow: none;
+  filter: none;
+}
+
+:global(.cell.empty) {
+  background: var(--px-bg);
+  border: 1px solid var(--px-divider);
+  border-radius: 0;
+}
+
+:global(.cell.filled) {
+  border: 1px solid var(--px-border);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+:global(.cell:disabled),
+:global(.cell.filled:disabled) {
+  opacity: 0.92;
+  box-shadow: none;
+  filter: none;
+}
+

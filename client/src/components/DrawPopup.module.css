@@ -1,0 +1,56 @@
+:global(.modal-overlay) {
+  background-image: repeating-conic-gradient(
+    color-mix(in srgb, var(--px-darkest) 65%, transparent) 0% 25%,
+    color-mix(in srgb, var(--px-darkest) 45%, transparent) 0% 50%
+  );
+  background-size: 4px 4px;
+  background-color: color-mix(in srgb, var(--px-darkest) 55%, transparent);
+}
+
+:global(.modal.draw-modal) {
+  position: relative;
+  background: var(--px-surface);
+  border-radius: 0;
+  border: 3px solid var(--px-deep);
+  box-shadow:
+    inset 0 0 0 2px var(--px-amber-light),
+    0 0 0 3px var(--px-darkest),
+    6px 6px 0 var(--px-darkest);
+  font-family: var(--px-font-display);
+  color: var(--px-text);
+  padding: var(--px-3);
+}
+
+:global(.modal.draw-modal)::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--px-amber);
+  border: 2px solid var(--px-deep);
+  top: -4px;
+  left: -4px;
+}
+
+:global(.modal.draw-modal)::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--px-amber);
+  border: 2px solid var(--px-deep);
+  top: -4px;
+  right: -4px;
+}
+
+:global(.modal.draw-modal h2) {
+  font-family: var(--px-font-display);
+  font-size: var(--px-text-xl);
+  color: var(--px-amber);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--px-2);
+  border-bottom: 2px solid var(--px-divider);
+  padding-bottom: var(--px-1);
+}
+

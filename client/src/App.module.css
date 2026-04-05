@@ -5,16 +5,16 @@
 :global(body) {
   margin: 0;
   overflow: hidden;
-  background: #F9F8F6;
-  color: #111;
-  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--px-bg);
+  color: var(--px-darkest);
+  font-family: var(--px-font-body);
 }
 
 .topBar {
   height: 64px;
   min-height: 64px; /* Ensure it doesn't shrink */
-  background: #fff;
-  border-bottom: 1px solid #ddd;
+  background: var(--px-bg);
+  border-bottom: 1px solid var(--px-divider);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -46,7 +46,7 @@
   inset: 0;
   z-index: 200;
   background: rgba(12, 19, 22, 0.92);
-  color: #F9F8F6;
+  color: var(--px-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,17 +77,17 @@
 .welcomeEnterButton {
   width: 88px;
   height: 88px;
-  border-radius: 18px;
-  border: 1px solid rgba(249, 248, 246, 0.8);
-  background: #F9F8F6;
-  color: #111;
+  border-radius: 0;
+  border: 1px solid var(--px-bg);
+  background: var(--px-bg);
+  color: var(--px-darkest);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 .welcomeEnterButton:hover {
-  background: #fff;
+  background: var(--px-bg);
 }
 
 :global(.grid-shell) {
@@ -109,7 +109,7 @@
 }
 
 :global(.cell) {
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--px-divider);
   background: transparent;
   padding: 0;
   display: flex;
@@ -126,7 +126,7 @@
 :global(.cell.empty span) {
   opacity: 0;
   font-size: 48px;
-  color: #bbb;
+  color: var(--px-text-muted);
 }
 
 :global(.cell.empty:hover span) {
@@ -148,34 +148,34 @@
 :global(.primary),
 :global(.destructive),
 :global(.ghost) {
-  border-radius: 8px;
-  border: 1px solid #111;
+  border-radius: 0;
+  border: 1px solid var(--px-darkest);
   padding: 8px 12px;
   cursor: pointer;
 }
 
 :global(.primary) {
-  background: #111;
-  color: #fff;
+  background: var(--px-darkest);
+  color: var(--px-bg);
 }
 
 :global(.destructive) {
   background: #C0392B;
-  color: #fff;
+  color: var(--px-bg);
   border-color: #C0392B;
 }
 
 :global(.ghost) {
   background: transparent;
-  color: #111;
+  color: var(--px-darkest);
 }
 
 :global(.download-button) {
   right: 16px;
   bottom: 16px;
   z-index: 20;
-  background: #111;
-  color: #fff;
+  background: var(--px-darkest);
+  color: var(--px-bg);
 }
 
 :global(.modal-overlay) {
@@ -190,9 +190,9 @@
 
 :global(.modal) {
   width: min(90vw, 620px);
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+  background: var(--px-bg);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--px-deep);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -224,5 +224,5 @@
 .stats div {
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: var(--px-text-muted);
 }

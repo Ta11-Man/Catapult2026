@@ -22,13 +22,15 @@ Proof of Attrition is a full-stack monorepo:
 4. Verify health endpoint and open app.
 
 ```bash
-cd client
-npm install
-cp .env.example .env.local
-
 cd server
 npm install
 cp .env.example .env
+# Edit .env with your MongoDB URI and credentials
+
+cd ../client
+npm install
+cp .env.example .env.local
+# Edit .env.local with your API URL and World ID credentials
 ```
 
 ```bash
@@ -95,29 +97,23 @@ http://localhost:5173
 
 ## Environment Variables
 
-### Client (`client/.env.local`)
+See [`.env.example` files](./client/.env.example) for complete documentation.
 
-```dotenv
-VITE_API_URL=http://localhost:4000
-VITE_WLD_APP_ID=app_placeholder
-VITE_WLD_ACTION=submit-cell
-```
+### Quick Reference
 
-### Server (`server/.env`)
+**Client** (`client/.env.local`):
+- `VITE_API_URL` - Backend API URL
+- `VITE_WLD_APP_ID` - World ID app ID (get from developer.worldcoin.org)
+- `VITE_WLD_ACTION` - World ID action ID
 
-```dotenv
-MONGODB_URI=<ask madhav>appName=<ask madhav>
-PORT=4000
-WLD_APP_ID=app_placeholder
-WLD_ACTION=submit-cell
-ALLOWED_ORIGIN=
-```
+**Server** (`server/.env`):
+- `MONGODB_URI` - MongoDB Atlas connection string
+- `PORT` - Server port (default 4000)
+- `WLD_APP_ID` - World ID app ID
+- `WLD_ACTION` - World ID action ID  
+- `ALLOWED_ORIGIN` - Frontend domain for CORS (set in production)
 
-`ALLOWED_ORIGIN` should be set to your GitHub Pages origin in production, for example:
-
-```dotenv
-ALLOWED_ORIGIN=https://your-org.github.io
-```
+**⚠️ IMPORTANT**: Never commit `.env` or `.env.local` files. See [SECURITY.md](./SECURITY.md) for credential rotation procedures.
 
 ## Install and Run
 

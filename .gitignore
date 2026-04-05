@@ -6,10 +6,32 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-*env*
+
+# Environment variables - NEVER commit these
 .env
+.env.local
+.env.*.local
 **/.env
+**/.env.local
+**/.env.*.local
+
+# Dependencies and build outputs
 */dist/*
 */build/*
 */node_modules/*
-server/.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# notes
+PRE-RELEASE-CHECKLIST.md
+cleanup-git-history.sh
+SECURITY.md

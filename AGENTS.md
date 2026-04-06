@@ -1,4 +1,4 @@
-# AGENTS Guide - Proof of Attrition
+# AGENTS Guide - Reef
 
 ## What this repo is
 - Monorepo with two deployable services: `client/` (Vite + React SPA) and `server/` (Express + Mongo API).
@@ -9,13 +9,15 @@
 - Frontend state orchestration is centralized in `client/src/App.jsx`; popups are controlled by `activePopup` (`login` -> `draw` -> `confirm`).
 - `client/src/App.jsx` also owns the intro/welcome overlay (typewriter + enter transition) and background audio startup (`/public/audio/bg.mp3`), so UX timing/state changes should be coordinated there.
 - World ID modal handoff is stateful in `client/src/App.jsx`: local login popup is unmounted before `useIDKit().setOpen(true)` via `isWorldIdPending`, and dismissal restores `login` when no success/error callback resolves.
-- `BottomStatusBar` is fed from `client/src/App.jsx` (`submissionCount`, latest parsable `createdAt`) and computes the decay countdown in `client/src/components/BottomStatusBar.jsx`.
+- BottomStatusBar is fed from `client/src/App.jsx` (`submissionCount`, latest parsable `createdAt`) and computes the decay countdown in `client/src/components/BottomStatusBar.jsx`.
 - Grid data lifecycle lives in `client/src/hooks/useGrid.js`: initial fetch (`fetchCells`), derived dimensions (`computeGridDimensions`), zoom controls, and local append via `addCell`.
 - `client/src/hooks/useGrid.js` also performs a one-time initial viewport fit after the first fetch resolves (`hasFetchedCellsRef` + `hasAppliedInitialFitRef`), reserving space for the bottom status bar via `BOTTOM_STATUS_RESERVE`.
 - Session/identity lifecycle lives in `client/src/hooks/useSession.js`; `setVerifiedNullifier` preserves `hasSubmitted` only for the same nullifier.
+- `client/src/components/DrawPopup.jsx` submits a composited PNG: exported stroke layer + selected background color + optional uploaded image. If composition fails, it falls back to the stroke-only export so submission still proceeds.
 - API calls are funneled through `client/src/api/client.js` (`fetchCells`, `createCell`), with error normalization (`Error.message` = backend `error`, plus `error.status`).
 - Server entrypoint `server/server.js` wires CORS, JSON body limit (`15mb`), health check (`/health`), and mounts `server/routes/cells.js`.
 - `POST /api/cells` in `server/routes/cells.js` validates payload, checks duplicate nullifier, checks occupied index, then writes.
+- `POST /api/cells` also maps Mongo duplicate-key errors (`code 11000`) to `cell_taken`/`already_submitted`, preserving conflict semantics under race conditions.
 - Conflict taxonomy is backend-meaningful: `already_submitted` and `cell_taken` are both `409`; `invalid_payload` is `400`. Client UX currently special-cases only `already_submitted` in `client/src/App.jsx` (`handleConfirm`).
 
 ## High-value workflows
@@ -28,6 +30,7 @@
 ## Project-specific conventions
 - Keep frontend/backend contract changes synchronized in both `server/routes/cells.js` and `client/src/api/client.js` (explicitly called out in `README.md`).
 - `POST /api/cells` and `createCell` require `gridIndex` with `nullifierHash` and `imageData`; keep docs/examples aligned whenever this payload changes.
+- Treat `server/routes/cells.js` + `client/src/api/client.js` as API source of truth when docs diverge (current `README.md` `POST /api/cells` request example omits `gridIndex`, and its response list omits `cell_taken`).
 - Server is CommonJS (`require/module.exports`); client is ESM (`import/export`). Keep style consistent per side.
 - `GET /api/cells` intentionally omits `nullifierHash`; do not expose it unless product requirements change.
 - Grid UI disables filled cells (`client/src/components/Cell.jsx`) and derives occupancy from `gridIndex` map in `client/src/components/Grid.jsx`.
@@ -41,4 +44,3 @@
 - Required server env vars: `MONGODB_URI`, `PORT`, `ALLOWED_ORIGIN` (plus placeholders `WLD_APP_ID`, `WLD_ACTION`).
 - CORS allowlist always includes `http://localhost:5173`; production origin is appended from `ALLOWED_ORIGIN` in `server/server.js`.
 - Active drawing flow relies on `react-sketch-canvas` (`DrawPopup.jsx`); export utility uses `html2canvas` (`DownloadButton.jsx`) and is currently unmounted from `client/src/App.jsx`.
-

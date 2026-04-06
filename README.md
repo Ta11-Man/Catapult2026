@@ -1,6 +1,6 @@
-# Proof of Attrition
+# Reef
 
-Proof of Attrition is a full-stack monorepo:
+Reef is a full-stack monorepo:
 
 - `client/` - Vite + React single-page app (deploy to GitHub Pages)
 - `server/` - Express + Mongoose API (deploy separately, e.g. Railway)
